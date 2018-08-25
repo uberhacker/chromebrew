@@ -14,7 +14,7 @@ class Libreoffice < Package
 
   depends_on 'cups'
   depends_on 'dbus_glib'
-  depends_on 'gstreamer'
+  depends_on 'gstreamer_plugins_base'
   depends_on 'gtk2'
   depends_on 'gtk3'
   depends_on 'jdk8'

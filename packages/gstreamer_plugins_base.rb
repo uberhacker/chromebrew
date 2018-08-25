@@ -14,6 +14,7 @@ class Gstreamer_plugins_base < Package
 
   depends_on 'alsa_lib'
   depends_on 'gstreamer'
+  depends_on 'libglu'
   depends_on 'libjpeg'
   depends_on 'libopus'
   depends_on 'libsdl'
