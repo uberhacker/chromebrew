@@ -12,6 +12,7 @@ class Mysql_workbench < Package
   binary_sha256 ({
   })
 
+  depends_on 'antlr4'
   depends_on 'libsigcplusplus'
   depends_on 'libsecret'
   depends_on 'libglade'
@@ -24,12 +25,17 @@ class Mysql_workbench < Package
   depends_on 'swig'
   depends_on 'sqlite'
   depends_on 'gdal'
+  depends_on 'percona_server'
   depends_on 'sommelier'
 
   def self.build
     FileUtils.mkdir 'wb-build'
     Dir.chdir 'wb-build' do
-      system "cmake .. -DCMAKE_INSTALL_PREFIX=#{CREW_PREFIX}"
+      system "cmake .. \
+             -DCMAKE_INSTALL_PREFIX=#{CREW_PREFIX} \
+             -DANTLR4_LIBRARY=#{CREW_LIB_PREFIX} \
+             -DANTLR4_INCLUDE_DIR=#{CREW_LIB_PREFIX} \
+             -DCMAKE_BUILD_TYPE=Release"
       system 'make'
     end
   end
