@@ -45,8 +45,8 @@ class Vscode < Package
       system "sed -i 's, --max_old_space_size=4095,,g' package.json"
       system 'yarn'
       # Fix for /usr/lib/libpthread_nonshared.a file not found.  See https://github.com/Microsoft/node-pty/issues/209.
-      system "sed -i '31d' node_modules/node-pty/binding.gyp"
-      system "yarn run gulp vscode-linux-#{build_arch}-min"
+      #system "sed -i '31d' ../node_modules/node-pty/binding.gyp"
+      system "yarn run gulp vscode-linux-#{build_arch}-min --max_old_space_size=1024"
       system "echo '#!/bin/bash' > code"
       system "echo 'cd #{CREW_PREFIX}/share/vscode' >> code"
       system "echo 'scripts/code.sh' >> code"
