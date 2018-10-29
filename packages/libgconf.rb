@@ -1,10 +1,10 @@
 require 'package'
 
 class Libgconf < Package
-  description 'GConf is a configuration database system for storing application preferences.'
+  description 'GConf is a system for storing application preferences.'
   homepage 'https://projects-old.gnome.org/gconf/'
   version '3.2.6'
-  source_url 'https://ftp.gnome.org/pub/gnome/sources/GConf/3.2/GConf-3.2.6.tar.xz'
+  source_url 'https://ftp.gnome.org/pub/GNOME/sources/GConf/3.2/GConf-3.2.6.tar.xz'
   source_sha256 '1912b91803ab09a5eed34d364bf09fe3a2a9c96751fde03a4e0cfa51a04d784c'
 
   binary_url ({
@@ -14,30 +14,21 @@ class Libgconf < Package
      x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/libgconf-3.2.6-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: 'b3ce596e8f2428f0da25a73be4434b89889686790681b228ebfeae7eb9cd365f',
-     armv7l: 'b3ce596e8f2428f0da25a73be4434b89889686790681b228ebfeae7eb9cd365f',
-       i686: '1519f6e9b3dbbe00af80d3bb0d0d67233977aa09c62f36263564d5a803e4c44a',
-     x86_64: '694f3c37b35df0d3b33694c9e31716009a2280809ebd6644542945fca76f6ebd',
+    aarch64: 'a6c6861a58365e66df3a2eb01faa1f801d52a34fbb10b2f1ac842f7e72affb6c',
+     armv7l: 'a6c6861a58365e66df3a2eb01faa1f801d52a34fbb10b2f1ac842f7e72affb6c',
+       i686: '87bff50ea19f42f0fa87a61e7b7fbed10b5f8e2305659e0d90cf26b868f9e8a4',
+     x86_64: 'be97ae6807ad929e22b58e5ce3b561d0b0b49532b9980024aa854ffd762a1ec5',
   })
 
-  depends_on 'dbus_glib' => :build
-  depends_on 'gtk3' => :build
-  depends_on 'openldap' => :build
+  depends_on 'dbus_glib'
+  depends_on 'gtk3'
 
   def self.build
-    system "sed -i 's,/usr/bin/file,#{CREW_PREFIX}/bin/file,g' configure"
-    system './configure',
-           "--prefix=#{CREW_PREFIX}",
-           "--libdir=#{CREW_LIB_PREFIX}",
-           '--disable-maintainer-mode',
-           '--disable-nls',
-           '--disable-orbit',
-           '--disable-static',
-           '--with-openldap'
-    system 'make'
+    system "./configure --prefix=#{CREW_PREFIX} --libdir=#{CREW_LIB_PREFIX} --disable-orbit"
+    system "make"
   end
 
   def self.install
-    system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system "make install DESTDIR=#{CREW_DEST_DIR}"
   end
 end

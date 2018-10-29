@@ -1,8 +1,8 @@
 require 'package'
 
 class Dbus_glib < Package
-  description 'D-Bus is a message bus system, a simple way for applications to talk to one another.'
-  homepage 'https://www.freedesktop.org/wiki/Software/dbus/'
+  description 'The D-Bus GLib package contains GLib interfaces to the D-Bus API.'
+  homepage 'http://www.linuxfromscratch.org/blfs/view/svn/general/dbus-glib.html'
   version '0.110'
   source_url 'https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.110.tar.gz'
   source_sha256 '7ce4760cf66c69148f6bd6c92feaabb8812dee30846b24cd0f7395c436d7e825'
@@ -14,25 +14,21 @@ class Dbus_glib < Package
      x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/dbus_glib-0.110-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '8d1b018f7ae01b9b008923368f940f23365cecf0345c2d0ca15ccc0632c39c10',
-     armv7l: '8d1b018f7ae01b9b008923368f940f23365cecf0345c2d0ca15ccc0632c39c10',
-       i686: '691d9a465ff5bd2f8d0f11072f2527a987debfb55fa76dce7ae8b6682a0783ef',
-     x86_64: 'f212225d9ae0766041883c1e570e737e1bcf09f3057028c6e4b6d2d4fd53ce14',
+    aarch64: '0845692e0819a80ebb4e6874dc707a07e619e12974aad74702709d7ac8840961',
+     armv7l: '0845692e0819a80ebb4e6874dc707a07e619e12974aad74702709d7ac8840961',
+       i686: '7ca87d44120d2bbe554e23aa71d01e4643002c77abc303e510feb8c9ea237f9f',
+     x86_64: 'be9ed1170dc5c36a905ecc3387e5cdea9d5c8eb597cf233936a5095bfb55107d',
   })
 
   depends_on 'dbus'
   depends_on 'glib'
-  depends_on 'python27'
 
   def self.build
-    system './configure',
-           "--prefix=#{CREW_PREFIX}",
-           "--libdir=#{CREW_LIB_PREFIX}"
-    system 'make'
+    system "./configure", "--prefix=#{CREW_PREFIX}", "--libdir=#{CREW_LIB_PREFIX}"
+    system "make"
   end
 
   def self.install
-    system 'pip install six'
-    system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system "make install DESTDIR=#{CREW_DEST_DIR}"
   end
 end

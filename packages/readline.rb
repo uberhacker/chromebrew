@@ -3,26 +3,22 @@ require 'package'
 class Readline < Package
   description 'The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in.'
   homepage 'http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html'
-  version '6.3p8'
-  source_url 'http://ftp.gnu.org/gnu/readline/readline-6.3.tar.gz'
+  version '6.3p8-1'
+  source_url 'https://ftpmirror.gnu.org/gnu/readline/readline-6.3.tar.gz'
   source_sha256 '56ba6071b9462f980c5a72ab0023893b65ba6debb4eeb475d7a563dc65cafd43'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-1-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-1-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-1-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/readline-6.3p8-1-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '7b70ee08258af2bd190b30639306aa4d0b71273cfb702a4ae75003317f19702f',
-     armv7l: '7b70ee08258af2bd190b30639306aa4d0b71273cfb702a4ae75003317f19702f',
-       i686: '572baf2f2bba47d719714fc97709bc3932abab4bf1a9d838bb47ccd0f1fa4395',
-     x86_64: 'f235ee73feba6d2c0bb085042db9462225cda1a18f190a47116417cc6993e716',
+    aarch64: 'bb0ad30615c12e9559fcc7158a87d76cda4f216b4ccd79e0434064cd071e197c',
+     armv7l: 'bb0ad30615c12e9559fcc7158a87d76cda4f216b4ccd79e0434064cd071e197c',
+       i686: 'a3015ee22758606e1bb85e4add62335bb6ce36da2cb99805da051609b04843c6',
+     x86_64: '77227d45ffa89f861ddbc7dba8433c0a8401333ab527d11c0c809f81de53d567',
   })
-
-  depends_on 'buildessential' => :build
-  depends_on 'patch' => :build
-  depends_on 'ncurses'
 
   def self.build
     system "wget -r -N -nd --no-parent ftp://ftp.gnu.org/gnu/readline/readline-6.3-patches/readline63-001 -P readline-6.3-patches"
@@ -36,11 +32,18 @@ class Readline < Package
     # system "for i in readline-6.3-patches/*.sig; do gpg $i; done"
     system "for i in readline-6.3-patches/readline63-???; do patch < $i; done"
 
-    system "CC='gcc' ./configure --libdir=#{CREW_LIB_PREFIX} --disable-static --with-curses"
+    system "CC='gcc' ./configure --prefix=#{CREW_PREFIX} --libdir=#{CREW_LIB_PREFIX} --disable-static --with-curses"
     system "make"
   end
 
   def self.install
     system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    FileUtils.mkdir_p "#{CREW_DEST_LIB_PREFIX}"
+    system "ln", "-sf", "/#{ARCH_LIB}/libreadline.so.6.3", "#{CREW_DEST_LIB_PREFIX}/libreadline.so.6"
+    system "ln", "-sf", "/#{ARCH_LIB}/libreadline.so.6.3", "#{CREW_DEST_LIB_PREFIX}/libreadline.so.6.3"
+    system "ln", "-sf", "/#{ARCH_LIB}/libreadline.so.6.3", "#{CREW_DEST_LIB_PREFIX}/libreadline.so"
+    system "ln", "-sf", "/#{ARCH_LIB}/libhistory.so.6.3", "#{CREW_DEST_LIB_PREFIX}/libhistory.so.6"
+    system "ln", "-sf", "/#{ARCH_LIB}/libhistory.so.6.3", "#{CREW_DEST_LIB_PREFIX}/libhistory.so.6.3"
+    system "ln", "-sf", "/#{ARCH_LIB}/libhistory.so.6.3", "#{CREW_DEST_LIB_PREFIX}/libhistory.so"
   end
 end

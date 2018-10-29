@@ -41,8 +41,10 @@ case "$architecture" in
 "aarch64")
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/ruby-2.5.1-chromeos-armv7l.tar.xz')
   sha256s+=('b03154f57e2599f71b0bdd42ba3a126397eca451ccb99485615b5b0429955152')
-  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.17.1-chromeos-armv7l.tar.xz')
-  sha256s+=('d8f13dc48bae374a359de16f564357d2d7a350061734be7f6807ef2bf64a1ca2')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/libiconv-1.15-chromeos-armv7l.tar.xz')
+  sha256s+=('047163a67f3ea9e143b465087d5ea4a3d17b963c8ad3579bc27a21934d4a17ab')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-armv7l.tar.xz')
+  sha256s+=('c8ed38f5e4e8ce268f42c0f65c47b8a18674c9704ed8a9eefb376aedb60ced69')
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/libssh2-1.8.0-chromeos-armv7l.tar.xz')
   sha256s+=('6fa84296583273dd9e749a2c54cb1cf688a7dab032e2528de5944a4d9777f037')
   ;;
@@ -53,24 +55,30 @@ case "$architecture" in
   fi
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/ruby-2.5.1-chromeos-armv7l.tar.xz')
   sha256s+=('b03154f57e2599f71b0bdd42ba3a126397eca451ccb99485615b5b0429955152')
-  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.17.1-chromeos-armv7l.tar.xz')
-  sha256s+=('d8f13dc48bae374a359de16f564357d2d7a350061734be7f6807ef2bf64a1ca2')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/libiconv-1.15-chromeos-armv7l.tar.xz')
+  sha256s+=('047163a67f3ea9e143b465087d5ea4a3d17b963c8ad3579bc27a21934d4a17ab')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-armv7l.tar.xz')
+  sha256s+=('c8ed38f5e4e8ce268f42c0f65c47b8a18674c9704ed8a9eefb376aedb60ced69')
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/libssh2-1.8.0-chromeos-armv7l.tar.xz')
   sha256s+=('6fa84296583273dd9e749a2c54cb1cf688a7dab032e2528de5944a4d9777f037')
   ;;
 "i686")
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/ruby-2.5.1-chromeos-i686.tar.xz')
   sha256s+=('de1d30b89fd09b6e544fe537cbbc4cdc76f4f1610b0f801ab82ce90c1dc04999')
-  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.17.1-chromeos-i686.tar.xz')
-  sha256s+=('303eaede71c14030740054db083d0c182b923e22f12bb39101821b093eaacb0e')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/libiconv-1.15-chromeos-i686.tar.xz')
+  sha256s+=('28de005b59407d5343775296814e10272c53aedd860e0208f396cc873045c095')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-i686.tar.xz')
+  sha256s+=('3c0e0b6fcfd0c07b2722c6c89998133281a49a5d265b3fb7f3b5309247909bf3')
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/libssh2-1.8.0-chromeos-i686.tar.xz')
   sha256s+=('771b2d30a49dd691db8456f773da404753d368f3c31d03c682c552ea0b5eb65e')
   ;;
 "x86_64")
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/ruby-2.5.1-chromeos-x86_64.tar.xz')
   sha256s+=('2e60c9b84968f17ac796e92992a5e32b4c39291d5a0b1bb0183f43d1c784303f')
-  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.17.1-chromeos-x86_64.tar.xz')
-  sha256s+=('797ed11ae67ffaf1ba0c5019d10270c0b6a880f40b8c89cb2da98c7fa17cae1d')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/libiconv-1.15-chromeos-x86_64.tar.xz')
+  sha256s+=('8689ee2b4acc0440df6eec9eb0fb19aa8393b68bd64517cbca65d98041a2c7cc')
+  urls+=('https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-x86_64.tar.xz')
+  sha256s+=('80cc91e879dde9578668ea091a5d5f3129b57231b334bc4aa4cf4a5739f4feee')
   urls+=('https://dl.bintray.com/chromebrew/chromebrew/libssh2-1.8.0-chromeos-x86_64.tar.xz')
   sha256s+=('6e026450389021c6267a9cc79b8722d15f48e2f8d812d5212501f686b4368e3c')
   ;;
@@ -188,9 +196,7 @@ echo lib >> .git/info/sparse-checkout
 echo crew >> .git/info/sparse-checkout
 git fetch origin master
 git reset --hard origin/master
-yes | crew install buildessential
-yes | crew install less
-yes | crew install most
+yes | crew install buildessential less most
 echo
 echo "To set the default PAGER environment variable to be able to use less:"
 echo "echo \"export PAGER=$CREW_PREFIX/bin/less\" >> ~/.bashrc && . ~/.bashrc"

@@ -3,21 +3,19 @@ require 'package'
 class Qemu < Package
   description 'QEMU is a generic and open source machine emulator and virtualizer.'
   homepage 'http://www.qemu.org/'
-  version '2.12.0'
-  source_url 'https://download.qemu.org/qemu-2.12.0.tar.xz'
-  source_sha256 'e69301f361ff65bf5dabd8a19196aeaa5613c1b5ae1678f0823bdf50e7d5c6fc'
+  version '3.0.0'
+  source_url 'https://download.qemu.org/qemu-3.0.0.tar.xz'
+  source_sha256 '8d7af64fe8bd5ea5c3bdf17131a8b858491bcce1ee3839425a6d91fb821b5713'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-2.12.0-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-2.12.0-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-2.12.0-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-2.12.0-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-3.0.0-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-3.0.0-chromeos-armv7l.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/qemu-3.0.0-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '137ecd91b0e74672566e8fb7742373f45584e434100001494f71e7b33b3d4a86',
-     armv7l: '137ecd91b0e74672566e8fb7742373f45584e434100001494f71e7b33b3d4a86',
-       i686: 'c024fc3cb47b501472530af2c912c01655afedd5cbe833a7e57bbfb02bffa06d',
-     x86_64: '0c9723102c31bc87951612e56758a291bed7a0650d3e720962d3e50a81b07486',
+    aarch64: 'c5358ff14b2271b5863a9234d57c4cc8af119f80b490e036fc0c5f9eef0fe98f',
+     armv7l: 'c5358ff14b2271b5863a9234d57c4cc8af119f80b490e036fc0c5f9eef0fe98f',
+     x86_64: '3f5e0ad3cae968281e720a3351157e7e72ee275a403d89cce4dc0090f13a08dc',
   })
 
   depends_on 'bz2'
@@ -32,9 +30,13 @@ class Qemu < Package
   depends_on 'libusb'
   depends_on 'lzo'
   depends_on 'pixman'
+  depends_on 'hicolor_icon_theme'
 
   def self.build
-    system "./configure --prefix=#{CREW_PREFIX}"
+    system "./configure",
+           "--prefix=#{CREW_PREFIX}",
+           "--libdir=#{CREW_LIB_PREFIX}",
+           "--disable-stack-protector"
     system 'make'
   end
 

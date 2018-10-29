@@ -3,21 +3,21 @@ require 'package'
 class Go < Package
   description 'Go is an open source programming language that makes it easy to build simple, reliable, and efficient software.'
   homepage 'https://golang.org/'
-  version '1.10.2'
-  source_url 'https://dl.google.com/go/go1.10.2.src.tar.gz'
-  source_sha256 '6264609c6b9cd8ed8e02ca84605d727ce1898d74efa79841660b2e3e985a98bd'
+  version '1.11.1'
+  source_url 'https://dl.google.com/go/go1.11.1.src.tar.gz'
+  source_sha256 '558f8c169ae215e25b81421596e8de7572bd3ba824b79add22fba6e284db1117'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.10.2-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.10.2-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.10.2-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.10.2-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.11.1-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.11.1-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.11.1-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/go-1.11.1-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '439c856bf87c758ba4cc227cd5ba4dd916908ed8d05d576610906a9ac908c546',
-     armv7l: '439c856bf87c758ba4cc227cd5ba4dd916908ed8d05d576610906a9ac908c546',
-       i686: 'f62c9b4a99a161c122b4099b0cda4de4d16ea26d651f70d70ecbd1cd85b44f94',
-     x86_64: 'd3c84bd8dec8731268e54a565da794e93966ffb68063a29dcc16b31bc007f723',
+    aarch64: '3a2c84b284794c22dfcf18181e0daa7db64c697b5b08bc357d96c5dda4234f4c',
+     armv7l: '3a2c84b284794c22dfcf18181e0daa7db64c697b5b08bc357d96c5dda4234f4c',
+       i686: 'c9abb02e4ff93d2ed181079a43387e6222667c5aaf36cd865159f19db9bcb424',
+     x86_64: '5bccebc7b426d01ddfb9919b9ac7e2ab3e47776a131a21da70a54d2639c361c0',
   })
 
   # Tests requires perl
@@ -31,7 +31,7 @@ class Go < Package
     FileUtils.cd('src') do
       # install with go_bootstrap if go is not in the path
       unless File.exist? "#{CREW_PREFIX}/share/go/bin/go"
-        system "GOROOT_BOOTSTRAP=#{CREW_PREFIX}/lib/go_bootstrap/go \
+        system "GOROOT_BOOTSTRAP=#{CREW_PREFIX}/share/go_bootstrap/go \
                 TMPDIR=#{CREW_PREFIX}/tmp \
                 GOROOT_FINAL=#{CREW_PREFIX}/share/go \
                 ./make.bash"
@@ -49,7 +49,7 @@ class Go < Package
     system "mkdir", "-p", dest
     FileUtils.cp_r Dir.pwd, dest
 
-    # make a symbolic link for /usr/local/bin/{go,gofmt}
+    # make a symbolic link for #{CREW_PREFIX}/bin/{go,gofmt}
     system "mkdir", "-p", "#{CREW_DEST_PREFIX}/bin"
     system "ln", "-s", "#{CREW_PREFIX}/share/go/bin/go", "#{CREW_DEST_PREFIX}/bin"
     system "ln", "-s", "#{CREW_PREFIX}/share/go/bin/gofmt", "#{CREW_DEST_PREFIX}/bin"

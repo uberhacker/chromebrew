@@ -33,7 +33,6 @@ class Libsecret < Package
            '--disable-gtk-doc-html',
            '--disable-gtk-doc-pdf',
            '--disable-manpages'
-    #system 'mv po/Makefile.in po/Makefile'
     system 'make'
   end
 

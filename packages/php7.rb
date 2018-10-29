@@ -3,34 +3,31 @@ require 'package'
 class Php7 < Package
   description 'PHP is a popular general-purpose scripting language that is especially suited to web development.'
   homepage 'http://www.php.net/'
-  version '7.2.6'
-  source_url 'https://php.net/distributions/php-7.2.6.tar.xz'
-  source_sha256 '1f004e049788a3effc89ef417f06a6cf704c95ae2a718b2175185f2983381ae7'
+  version '7.2.10'
+  source_url 'https://php.net/distributions/php-7.2.10.tar.xz'
+  source_sha256 '01c2154a3a8e3c0818acbdbc1a956832c828a0380ce6d1d14fea495ea21804f0'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.6-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.6-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.6-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.6-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.10-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.10-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.10-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.2.10-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '3053099db705b825c0f1f35913b9c69bad20d35f6ddd7581c0eb20e4433ec342',
-     armv7l: '3053099db705b825c0f1f35913b9c69bad20d35f6ddd7581c0eb20e4433ec342',
-       i686: '06e6fce8d54e425edc864eb7912521ffb2a2c5cfcf88ad83ddaf7f4c1d3853f4',
-     x86_64: '9f05e236dedcf92e85ef69ac6cd70a470a4e78dc4a7812d15eedfbad25ad5060',
+    aarch64: 'e9c4d38c07f1d97ce9e5ea036a6eaca971e2bd551fba1e29aa8d73bae2bcb334',
+     armv7l: 'e9c4d38c07f1d97ce9e5ea036a6eaca971e2bd551fba1e29aa8d73bae2bcb334',
+       i686: '3a91b09c4e743156b045733b2870da3fb7100aaacaedfe4a17b6aa169be77040',
+     x86_64: 'bf7dd5ff0401de55c715b478f7648a0f942f3df51e23f3d0425718962999334b',
   })
 
-  depends_on 'icu4c'
+  depends_on 'readline7'
   depends_on 'libgcrypt'
   depends_on 'libpng'
   depends_on 'libxslt'
   depends_on 'curl'
   depends_on 'pcre'
-  depends_on 'readline'
 
-  def self.build
-    libdir = 'lib'
-    libdir = 'lib64' if ARCH == 'x86_64'
+  def self.patch
     system "sed -i 's,;pid = run/php-fpm.pid,pid = #{CREW_PREFIX}/tmp/run/php-fpm.pid,' sapi/fpm/php-fpm.conf.in"
     system "sed -i 's,;error_log = log/php-fpm.log,error_log = #{CREW_PREFIX}/log/php-fpm.log,' sapi/fpm/php-fpm.conf.in"
     system "sed -i 's,include=@php_fpm_sysconfdir@/php-fpm.d,include=#{CREW_PREFIX}/etc/php-fpm.d,' sapi/fpm/php-fpm.conf.in"
@@ -43,6 +40,9 @@ class Php7 < Package
     system "sed -i 's,post_max_size = 8M,post_max_size = 128M,' php.ini-development"
     system "sed -i 's,upload_max_filesize = 2M,upload_max_filesize = 128M,' php.ini-development"
     system "sed -i 's,;opcache.enable=0,opcache.enable=1,' php.ini-development"
+  end
+
+  def self.build
     system "./configure \
       --prefix=#{CREW_PREFIX} \
       --docdir=#{CREW_PREFIX}/doc \
@@ -52,7 +52,7 @@ class Php7 < Package
       --mandir=#{CREW_PREFIX}/man \
       --sbindir=#{CREW_PREFIX}/bin \
       --with-config-file-path=#{CREW_PREFIX}/etc \
-      --with-libdir=#{libdir} \
+      --with-libdir=#{ARCH_LIB} \
       --enable-fpm \
       --enable-mbstring \
       --enable-opcache \
