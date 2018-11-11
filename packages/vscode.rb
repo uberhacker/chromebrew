@@ -18,7 +18,6 @@ class Vscode < Package
   depends_on 'yarn'
 
   def self.build
-    vscode_version='1.28.2'
     case ARCH
     when 'aarch64'
       build_arch='arm64'
@@ -32,7 +31,7 @@ class Vscode < Package
       build_arch='unknown'
     end
     system "yarn add global gulp gulp-watch"
-    system "curl -L https://github.com/microsoft/vscode/archive/#{vscode_version}.tar.gz > vscode.tar.gz"
+    system "curl -L https://github.com/microsoft/vscode/archive/1.28.2.tar.gz > vscode.tar.gz"
     FileUtils.mkdir 'vscode'
     system "tar --strip-components=1 -C vscode -xf vscode.tar.gz"
     system "curl -L https://go.microsoft.com/fwlink/?LinkID=620884 > vscode-official.tar.gz"
