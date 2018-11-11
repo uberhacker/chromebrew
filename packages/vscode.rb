@@ -3,8 +3,8 @@ require 'package'
 class Vscode < Package
   description 'Visual Studio Code'
   homepage 'https://code.visualstudio.com/'
-  version '1.28.0'
-  source_url 'https://raw.githubusercontent.com/Microsoft/vscode/1.28.0/README.md'
+  version '1.28.2'
+  source_url 'https://raw.githubusercontent.com/Microsoft/vscode/1.28.2/README.md'
   source_sha256 'd06715446bc74818ec71962b35e409f026a0c06e9106084b08926bb22ef0c9d0'
 
   binary_url ({
@@ -18,7 +18,7 @@ class Vscode < Package
   depends_on 'yarn'
 
   def self.build
-    vscode_version='1.28.0'
+    vscode_version='1.28.2'
     case ARCH
     when 'aarch64'
       build_arch='arm64'
