@@ -18,10 +18,20 @@ class Nx < Package
   binary_sha256 ({
   })
 
+  def self.build
+    Dir.chdir "NX/etc/NX/server/packages" do
+      system "tar xvf nxclient.tar.gz"
+      system "tar xvf nxnode.tar.gz"
+      system "tar xvf nxplayer.tar.gz"
+      system "tar xvf nxserver.tar.gz"
+    end
+  end
+
   def self.install
-    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share"
-    system "cp -r NX/ #{CREW_DEST_PREFIX}/share"
-    system "chmod 755 #{CREW_DEST_PREFIX}/share/NX"
-    system "#{CREW_DEST_PREFIX}/share/NX/nxserver --install"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}"
+    Dir.chdir "NX/etc/NX/server/packages" do
+      system "mv NX/lib NX/lib64" if ARCH == 'x86_64'
+      system "cp -r NX/* #{CREW_DEST_PREFIX}"
+    end
   end
 end
