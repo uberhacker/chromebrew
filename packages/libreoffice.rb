@@ -13,11 +13,15 @@ class Libreoffice < Package
   })
 
   depends_on 'ant'
+  depends_on 'boost'
+  depends_on 'cppunit'
   depends_on 'cups'
+  depends_on 'curl'
   depends_on 'dbus_glib'
   depends_on 'gstreamer_plugins_base'
   depends_on 'gtk2'
   depends_on 'gtk3'
+  depends_on 'lcms'
   depends_on 'sommelier'
 
   def self.build
@@ -34,7 +38,7 @@ class Libreoffice < Package
            '--with-system-cairo',
            #'--with-system-clucene',
            #'--with-system-coinmp',
-           '--with-system-cppunit',
+           #'--with-system-cppunit',
            '--with-system-curl',
            '--with-system-epoxy',
            '--with-system-expat',
@@ -49,7 +53,7 @@ class Libreoffice < Package
            '--with-system-jpeg',
            '--with-system-lcms2',
            #'--with-system-libabw',
-           '--with-system-libatomic_ops'
+           '--with-system-libatomic_ops',
            #'--with-system-libcdr',
            #'--with-system-libcmis',
            #'--with-system-libebook',
@@ -67,7 +71,7 @@ class Libreoffice < Package
            '--with-system-libpng',
            #'--with-system-libqxp',
            #'--with-system-librevenge',
-           '--with-system-libs',
+           #'--with-system-libs',
            #'--with-system-libstaroffice',
            #'--with-system-libvisio',
            #'--with-system-libwpd',
@@ -89,7 +93,7 @@ class Libreoffice < Package
            #'--with-system-sane',
            '--with-system-serf',
            '--with-system-ucpp',
-           '--with-system-xmlsec',
+           #'--with-system-xmlsec',
            '--with-system-zlib',
            '--with-x'
     system 'make'
