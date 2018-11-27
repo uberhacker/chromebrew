@@ -28,7 +28,8 @@ class Gstreamer_plugins_base < Package
     system './configure',
            "--prefix=#{CREW_PREFIX}",
            "--libdir=#{CREW_LIB_PREFIX}",
-           '--disable-maintainer-mode'
+           '--disable-maintainer-mode',
+           '--disable-examples'
     system 'make'
   end
 
