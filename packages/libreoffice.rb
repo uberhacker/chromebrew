@@ -18,10 +18,13 @@ class Libreoffice < Package
   depends_on 'cups'
   depends_on 'curl'
   depends_on 'dbus_glib'
+  depends_on 'glm'
   depends_on 'gstreamer_plugins_base'
   depends_on 'gtk2'
   depends_on 'gtk3'
   depends_on 'lcms'
+  depends_on 'libatomic_ops'
+  depends_on 'openldap'
   depends_on 'sommelier'
 
   def self.build
@@ -84,7 +87,7 @@ class Libreoffice < Package
            #'--with-system-mythes',
            #'--with-system-neon',
            '--with-system-nss',
-           '--with-system-odbc',
+           #'--with-system-odbc',
            '--with-system-openldap',
            '--with-system-openssl',
            #'--with-system-orcus',
