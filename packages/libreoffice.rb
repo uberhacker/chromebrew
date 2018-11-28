@@ -19,7 +19,7 @@ class Libreoffice < Package
   depends_on 'curl'
   depends_on 'dbus_glib'
   depends_on 'glm'
-  depends_on 'gstreamer_plugins_base'
+  depends_on 'gst_plugins_base'
   depends_on 'gtk2'
   depends_on 'gtk3'
   depends_on 'hunspell'
