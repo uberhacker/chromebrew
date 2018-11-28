@@ -27,6 +27,7 @@ class Libreoffice < Package
   depends_on 'libatomic_ops'
   depends_on 'openldap'
   depends_on 'sane_backends'
+  depends_on 'unixodbc'
   depends_on 'sommelier'
 
   def self.build
