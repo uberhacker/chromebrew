@@ -22,9 +22,11 @@ class Libreoffice < Package
   depends_on 'gstreamer_plugins_base'
   depends_on 'gtk2'
   depends_on 'gtk3'
+  depends_on 'hunspell'
   depends_on 'lcms'
   depends_on 'libatomic_ops'
   depends_on 'openldap'
+  depends_on 'sane_backends'
   depends_on 'sommelier'
 
   def self.build
@@ -47,8 +49,8 @@ class Libreoffice < Package
            '--with-system-expat',
            #'--with-system-glm',
            #'--with-system-gpgmepp',
-           '--with-system-graphite',
-           '--with-system-harfbuzz',
+           #'--with-system-graphite',
+           #'--with-system-harfbuzz',
            '--with-system-headers',
            '--with-system-hunspell',
            '--with-system-icu',
@@ -86,7 +88,7 @@ class Libreoffice < Package
            #'--with-system-mdds',
            #'--with-system-mythes',
            #'--with-system-neon',
-           '--with-system-nss',
+           #'--with-system-nss',
            #'--with-system-odbc',
            '--with-system-openldap',
            '--with-system-openssl',
