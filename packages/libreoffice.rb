@@ -26,6 +26,7 @@ class Libreoffice < Package
   depends_on 'lcms'
   depends_on 'libatomic_ops'
   depends_on 'openldap'
+  depends_on 'poppler'
   depends_on 'sane_backends'
   depends_on 'unixodbc'
   depends_on 'sommelier'
@@ -52,7 +53,7 @@ class Libreoffice < Package
            #'--with-system-gpgmepp',
            #'--with-system-graphite',
            #'--with-system-harfbuzz',
-           '--with-system-headers',
+           #'--with-system-headers',
            '--with-system-hunspell',
            '--with-system-icu',
            '--with-system-icu-for-build=yes',
