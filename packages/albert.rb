@@ -19,7 +19,7 @@ class Albert < Package
   def self.build
     FileUtils.mkdir 'build'
     Dir.chdir 'build' do
-      system "cmake ../albert -DCMAKE_INSTALL_PREFIX=#{CREW_PREFIX} -DCMAKE_BUILD_TYPE=Release"
+      system "cmake .. -DCMAKE_INSTALL_PREFIX=#{CREW_PREFIX} -DCMAKE_BUILD_TYPE=Release"
       system 'make'
     end
   end
