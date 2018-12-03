@@ -15,6 +15,8 @@ class Juce < Package
   binary_sha256 ({
   })
 
+  depends_on 'webkitgtk'
+
   def self.install
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/bin"
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/juce"
