@@ -15,12 +15,9 @@ class Juce < Package
   binary_sha256 ({
   })
 
-  def self.build
+  def self.install
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/bin"
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/juce"
-  end
-
-  def self.install
     system "cp -r . #{CREW_DEST_PREFIX}/share/juce"
     system "ln -s #{CREW_PREFIX}/share/juce/Projucer #{CREW_DEST_PREFIX}/bin/projucer"
   end
