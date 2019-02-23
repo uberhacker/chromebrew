@@ -3,27 +3,30 @@ require 'package'
 class Firefox < Package
   description 'Mozilla Firefox (or simply Firefox) is a free and open-source web browser'
   homepage 'https://www.mozilla.org/en-US/firefox/'
-  version '63.0.3'
-  source_url 'https://ftp.mozilla.org/pub/firefox/releases/63.0.3/source/firefox-63.0.3.source.tar.xz'
-  source_sha256 '48a834daa9c5773272a30933936ea8a78b217494355749ee68996639451d0931'
+  version '65.0.1'
+  source_url 'https://ftp.mozilla.org/pub/firefox/releases/65.0.1/source/firefox-65.0.1.source.tar.xz'
+  source_sha256 '67e517f6d1ea8aa5c8f32404b8756f3205c3550917a91a19b0a0edccc656a3cc'
 
   binary_url ({
     aarch64: '',
      armv7l: '',
-       i686: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0.2/linux-i686/en-US/firefox-61.0.2.tar.bz2',
-     x86_64: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0.2/linux-x86_64/en-US/firefox-61.0.2.tar.bz2',
+       i686: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/65.0.1/linux-i686/en-US/firefox-65.0.1.tar.bz2',
+     x86_64: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/65.0.1/linux-x86_64/en-US/firefox-65.0.1.tar.bz2',
   })
   binary_sha256 ({
     aarch64: '',
      armv7l: '',
-       i686: '829c8d38b05212b82e1c340c1467ea3c2690184cd319d682b865b97f8d4b2da6',
-     x86_64: '3a729ddcb1e0f5d63933177a35177ac6172f12edbf9fbbbf45305f49333608de',
+       i686: '4f78c2c7cc56e5479415206e66039bd8634811dc311c2b53f22c6856fd98aa53',
+     x86_64: 'a89aae224b872d1b5e17ab213ca04a711ae72061828685f999ea2f52784acb56',
   })
 
   depends_on 'bz2'
   depends_on 'libevent'
   depends_on 'libjpeg'
   depends_on 'libpng'
+  depends_on 'libvpx'
+  depends_on 'nss'
+  depends_on 'rust'
 
   def self.build
     # For detailed build instructions, see https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Simple_Firefox_build/Linux_and_MacOS_build_preparation.
@@ -35,9 +38,9 @@ class Firefox < Package
            '--with-system-icu',
            '--with-system-jpeg',
            '--with-system-libevent',
-           #'--with-system-libvpx',
-           #'--with-system-nspr',
-           #'--with-system-nss',
+           '--with-system-libvpx',
+           '--with-system-nspr',
+           '--with-system-nss',
            '--with-system-png',
            '--with-system-zlib'
     system 'make'
