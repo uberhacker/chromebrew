@@ -3,9 +3,9 @@ require 'package'
 class Libreoffice < Package
   description 'LibreOffice is a powerful office suite - its clean interface and feature-rich tools help you unleash your creativity and enhance your productivity.'
   homepage 'https://www.libreoffice.org/'
-  version '6.1.3.2'
-  source_url 'https://download.documentfoundation.org/libreoffice/src/6.1.3/libreoffice-6.1.3.2.tar.xz'
-  source_sha256 'd46f38f6c48c6d2338fb97c6d0fae9b43802f9849b50817b3bcf9910f1708f44'
+  version '6.2.1'
+  source_url 'https://download.documentfoundation.org/libreoffice/src/6.2.1/libreoffice-6.2.1.1.tar.xz'
+  source_sha256 'bdb8b7f47eba9ac8da7943cd387f7661b2d7a34ebe45b61a3053ab46e679edd3'
 
   binary_url ({
   })
