@@ -3,31 +3,39 @@ require 'package'
 class Php5 < Package
   description 'PHP is a popular general-purpose scripting language that is especially suited to web development.'
   homepage 'http://www.php.net/'
-  version '5.6.37'
-  source_url 'http://php.net/distributions/php-5.6.37.tar.xz'
-  source_sha256 '5000d82610f9134aaedef28854ec3591f68dedf26a17b8935727dac2843bd256'
+  version '5.6.40'
+  source_url 'http://php.net/distributions/php-5.6.40.tar.xz'
+  source_sha256 '1369a51eee3995d7fbd1c5342e5cc917760e276d561595b6052b21ace2656d1c'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.37-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.37-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.37-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.37-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.40-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.40-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.40-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php5-5.6.40-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '993d11d53a2f8cc0313848e318e52471882f7ff73d8acff695ebfa97ccaf52ee',
-     armv7l: '993d11d53a2f8cc0313848e318e52471882f7ff73d8acff695ebfa97ccaf52ee',
-       i686: 'ff37cce3c0c7ff128ba08201994dfa355dc3527431811b3ab41c6c579949fe43',
-     x86_64: '51f08048091118b86a07a61708a388cd1312bca005dc7ba4bc06b11d20517b5c',
+    aarch64: '2c856f39c5bea81c5ffd1b0fc57a5046c9987cf44304e1b4b7a9b3f5c8249f6f',
+     armv7l: '2c856f39c5bea81c5ffd1b0fc57a5046c9987cf44304e1b4b7a9b3f5c8249f6f',
+       i686: '0fe21893525eeb70f2d7f075738e57f9d8edb5ead85e8c5b09de188b244c6a34',
+     x86_64: '26b5cc993b96db0bb251db8b5ed54d1b2f25c6c8f81b91e50bef35b4fc62d9ad',
   })
 
-  depends_on 'icu4c'
+  depends_on 'readline7'
   depends_on 'libgcrypt'
   depends_on 'libpng'
   depends_on 'libxslt'
+  depends_on 'libzip'
   depends_on 'curl'
+  depends_on 'exif'
+  depends_on 'freetype'
   depends_on 'pcre'
+  depends_on 'tidy'
+  depends_on 'unixodbc'
 
-  def self.build
+  def self.patch
+    # Fix for tidy
+    system "sed -i 's,buffio.h,tidybuffio.h,' ext/tidy/tidy.c"
+    # Configuration
     system "sed -i 's,;pid = run/php-fpm.pid,pid = #{CREW_PREFIX}/tmp/run/php-fpm.pid,' sapi/fpm/php-fpm.conf.in"
     system "sed -i 's,;error_log = log/php-fpm.log,error_log = #{CREW_PREFIX}/log/php-fpm.log,' sapi/fpm/php-fpm.conf.in"
     system "sed -i 's,include=@php_fpm_sysconfdir@/php-fpm.d,include=#{CREW_PREFIX}/etc/php-fpm.d,' sapi/fpm/php-fpm.conf.in"
@@ -42,6 +50,9 @@ class Php5 < Package
     system "sed -i 's,post_max_size = 8M,post_max_size = 128M,' php.ini-development"
     system "sed -i 's,upload_max_filesize = 2M,upload_max_filesize = 128M,' php.ini-development"
     system "sed -i 's,;opcache.enable=0,opcache.enable=1,' php.ini-development"
+  end
+
+  def self.build
     system "./configure \
       --prefix=#{CREW_PREFIX} \
       --docdir=#{CREW_PREFIX}/doc \
@@ -52,17 +63,32 @@ class Php5 < Package
       --sbindir=#{CREW_PREFIX}/bin \
       --with-config-file-path=#{CREW_PREFIX}/etc \
       --with-libdir=#{ARCH_LIB} \
+      --with-freetype-dir=#{CREW_PREFIX}/include/freetype2/freetype \
+      --enable-exif \
       --enable-fpm \
+      --enable-ftp \
       --enable-mbstring \
       --enable-opcache \
+      --enable-pcntl \
+      --enable-sockets \
+      --enable-shared \
+      --enable-shmop \
+      --enable-zip \
+      --with-bz2 \
       --with-curl \
       --with-gd \
-      --with-xsl \
+      --with-gettext \
+      --with-gmp \
+      --with-libzip \
       --with-mysqli \
       --with-openssl \
       --with-pdo-mysql \
+      --with-pear \
       --with-pcre-regex \
       --with-readline \
+      --with-tidy \
+      --with-unixODBC \
+      --with-xsl \
       --with-zlib"
     system 'make'
   end

@@ -3,17 +3,18 @@ require 'package'
 class Stack < Package
   description 'The Haskell Tool Stack - Stack is a cross-platform program for developing Haskell projects. It is aimed at Haskellers both new and experienced.'
   homepage 'https://docs.haskellstack.org/en/stable/README/'
-  version '1.6.3'
+  version '1.9.3'
 
   case ARCH
+  when 'aarch64', 'armv7l'
+    source_url 'https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-arm.tar.gz'
+    source_sha256 '96394b616e29b3bd2479a3712e2c0c375a7cfd748b613f7c6c3186d7ae92977b'
   when 'i686'
-    source_url 'https://github.com/commercialhaskell/stack/releases/download/v1.6.3/stack-1.6.3-linux-i386.tar.gz'
-    source_sha256 '31696f91a26db6a49dff438aff6bda071ad186356c8af1abfbe093b6a04ea3e8'
+    source_url 'https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-i386.tar.gz'
+    source_sha256 'c7a45fcf782fcc9b2bbac38f9e1b41afec5e940c6e26936a51652f246e226505'
   when 'x86_64'
-    source_url 'https://github.com/commercialhaskell/stack/releases/download/v1.6.3/stack-1.6.3-linux-x86_64.tar.gz'
-    source_sha256 '98cab9117a1b3d98207f67fe7abc6381a80dbeaa12780a8577dd1e03add0aab3'
-  else
-    puts "#{ARCH} architecture not supported.".lightred
+    source_url 'https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-x86_64.tar.gz'
+    source_sha256 'e2363728e5818ccc68db9371c15af892a9a1fc86d808d0a9a77257f13696e946'
   end
 
   binary_url ({
@@ -22,13 +23,10 @@ class Stack < Package
   })
 
   def self.install
-    system "mkdir $HOME/.stack"
-    system "mkdir -p #{CREW_DEST_DIR}$HOME/.stack"
-    system "mkdir -p #{CREW_DEST_PREFIX}/share/stack"
+    FileUtils.mkdir_p "#{CREW_DEST_HOME}/.stack"
     system "install -Dm755 stack #{CREW_DEST_PREFIX}/bin/stack"
-    system "echo 'local-bin-path: #{CREW_PREFIX}/bin' > $HOME/.stack/config.yaml"
-    system "echo 'local-programs-path: #{CREW_PREFIX}/share/stack' >> $HOME/.stack/config.yaml"
-    system "cp $HOME/.stack/config.yaml #{CREW_DEST_DIR}$HOME/.stack"
+    system "echo 'local-bin-path: #{CREW_PREFIX}/bin' > #{CREW_DEST_HOME}/.stack/config.yaml"
+    system "echo 'local-programs-path: #{CREW_PREFIX}/share/stack' >> #{CREW_DEST_HOME}/.stack/config.yaml"
   end
 
   def self.postinstall

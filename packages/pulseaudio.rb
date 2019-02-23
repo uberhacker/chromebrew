@@ -3,43 +3,49 @@ require 'package'
 class Pulseaudio < Package
   description 'PulseAudio is a sound system for POSIX OSes, meaning that it is a proxy for your sound applications.'
   homepage 'https://www.freedesktop.org/wiki/Software/PulseAudio/'
-  version '11.1'
-  source_url 'https://freedesktop.org/software/pulseaudio/releases/pulseaudio-11.1.tar.xz'
-  source_sha256 'f2521c525a77166189e3cb9169f75c2ee2b82fa3fcf9476024fbc2c3a6c9cd9e'
+  version '12.2'
+  source_url 'https://freedesktop.org/software/pulseaudio/releases/pulseaudio-12.2.tar.xz'
+  source_sha256 '809668ffc296043779c984f53461c2b3987a45b7a25eb2f0a1d11d9f23ba4055'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-11.1-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-11.1-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-11.1-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-11.1-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-12.2-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-12.2-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-12.2-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/pulseaudio-12.2-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '28ac4cfa32ca97dbd51cf678bfdc3f98e4eb4939bbf5bffc256f7021577d1bcf',
-     armv7l: '28ac4cfa32ca97dbd51cf678bfdc3f98e4eb4939bbf5bffc256f7021577d1bcf',
-       i686: '61cfd90e78fc8bb5c7a2422d3026883dae1f7efbb00e090946b58b2b365f0f42',
-     x86_64: '67608beaffd35ca0f5a3c35769797d2eae4193d5c81c8cad5e6e123f2d667e44',
+    aarch64: '21e0c3de444978be9c7bebcbd43a318be18d5a34abda349c9a47ee73a7dd954c',
+     armv7l: '21e0c3de444978be9c7bebcbd43a318be18d5a34abda349c9a47ee73a7dd954c',
+       i686: '7885682021dd56ebca0bc50476a25b7b9f61032cf7d29c1db54f14be0becaecf',
+     x86_64: '11ab10e4a08e5e701a085c20a5ca618f95089702b1c2a19dbba445ae7c41fd32',
   })
 
-  depends_on 'alsa_plugins'
-  depends_on 'dbus'
-  depends_on 'intltool'
+  depends_on 'gsettings_desktop_schemas'
+  depends_on 'alsa_plugins' => :build
+  depends_on 'tcpwrappers'
   depends_on 'libsndfile'
-  depends_on 'libatomic_ops'
-  depends_on 'speexdsp'
+  depends_on 'xorg_lib'
+  depends_on 'libgconf'
+  depends_on 'libsoxr'
   depends_on 'libcap'
-  depends_on 'libtool'
   depends_on 'jsonc'
-  depends_on 'gettext'
+  depends_on 'speex'
+  depends_on 'eudev'
+  depends_on 'gtk3'
+  depends_on 'dbus'
 
   def self.build
-    system "./configure \
-            --prefix=#{CREW_PREFIX} \
-            --libdir=#{CREW_LIB_PREFIX} \
-            --disable-x11"
-    system "make"
+    system './configure',
+           "--prefix=#{CREW_PREFIX}",
+           "--libdir=#{CREW_LIB_PREFIX}"
+    system 'make'
   end
 
   def self.install
-    system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
+  end
+
+  def self.check
+    system 'make', 'check'
   end
 end

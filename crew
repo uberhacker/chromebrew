@@ -27,6 +27,7 @@ Usage:
   crew help [<command>]
   crew install [-k|--keep] [-s|--build-from-source] [-S|--recursive-build] [-v|--verbose] <name> ...
   crew list (available|installed)
+  crew postinstall <name> ...
   crew remove [-v|--verbose] <name> ...
   crew search [-v|--verbose] [<name> ...]
   crew update
@@ -201,6 +202,10 @@ def help (pkgName)
   when "list"
     puts "List available or installed packages"
     puts "Usage: crew list (available|installed)"
+  when "postinstall"
+    puts "Display postinstall messages of package(s)."
+    puts "Usage: crew postinstall <package1> [<package2> ...]"
+    puts "The package(s) must be currently installed."
   when "remove"
     puts "Remove package(s)."
     puts "Usage: crew remove [-v|--verbose] <package1> [<package2> ...]"
@@ -261,6 +266,8 @@ def const (var)
       'CREW_NPROC',
       'CREW_PREFIX',
       'CREW_VERSION',
+      'HOME',
+      'LIBC_VERSION',
       'USER'
     ]
     vars.each { |var|
@@ -422,9 +429,9 @@ def download
   end
   Dir.chdir CREW_BREW_DIR do
     if @opt_verbose then
-      system('curl', '-v', '-C', '-', '--insecure', '-L', '-#', url, '-o', filename)
+      system('curl', '-v', '--progress-bar', '-C', '-', '--insecure', '-L', '-#', url, '-o', filename)
     else
-      system('curl', '-s', '-C', '-', '--insecure', '-L', '-#', url, '-o', filename)
+      system('curl', '--progress-bar', '-C', '-', '--insecure', '-L', '-#', url, '-o', filename)
     end
     abort 'Checksum mismatch. :/ Try again.'.lightred unless
       Digest::SHA256.hexdigest( File.read("./#{filename}") ) == sha256sum
@@ -476,7 +483,7 @@ end
 
 def build_and_preconfigure (target_dir)
   Dir.chdir target_dir do
-    puts "Building from source, this may take a while..."    
+    puts "Building from source, this may take a while..."
 
     # Rename *.la files temporily to *.la_tmp to avoid
     # libtool: link: '*.la' is not a valid libtool archive.
@@ -523,7 +530,7 @@ end
 
 def compress_doc (dir)
   # check whether crew should compress
-  return if CREW_NOT_COMPRESS || !File.exist?("#{CREW_PREFIX}/bin/compressdoc")
+  return if CREW_NOT_COMPRESS || ENV['CREW_NOT_COMPRESS'] || !File.exist?("#{CREW_PREFIX}/bin/compressdoc")
 
   if Dir.exist? dir
     system "find #{dir} -type f ! -perm -200 | xargs -r chmod u+w"
@@ -564,7 +571,7 @@ end
 
 def strip_find_files (find_cmd, strip_option = "")
   # check whether crew should strip
-  return if CREW_NOT_STRIP || !File.exist?("#{CREW_PREFIX}/bin/strip")
+  return if CREW_NOT_STRIP || ENV['CREW_NOT_STRIP'] || !File.exist?("#{CREW_PREFIX}/bin/strip")
 
   # run find_cmd and strip only ar or ELF files
   system "#{find_cmd} | xargs -r chmod u+w"
@@ -584,9 +591,17 @@ def install_package (pkgdir)
     strip_find_files "find . -type f ! -iname '*\.bz2' ! -iname '*\.gz' ! -iname '*\.lha' ! -iname '*\.lz' ! -iname '*\.rar' ! -iname '*\.tar' ! -iname '*\.tgz' ! -iname '*\.xz' ! -iname '*\.zip' -perm /111 -print | sed -e '/lib.*\.a$/d' -e '/lib.*\.so/d'"
 
     if @opt_verbose then
-      system "tar cvf - ./usr/* | (cd /; tar xp --keep-directory-symlink -f -)"
+      if Dir.exists? "#{pkgdir}/home" then
+        system "tar cvf - ./usr/* ./home/* | (cd /; tar xp --keep-directory-symlink -f -)"
+      else
+        system "tar cvf - ./usr/* | (cd /; tar xp --keep-directory-symlink -f -)"
+      end
     else
-      system "tar cf - ./usr/* | (cd /; tar xp --keep-directory-symlink -f -)"
+      if Dir.exists? "#{pkgdir}/home" then
+        system "tar cf - ./usr/* ./home/* | (cd /; tar xp --keep-directory-symlink -f -)"
+      else
+        system "tar cf - ./usr/* | (cd /; tar xp --keep-directory-symlink -f -)"
+      end
     end
   end
 end
@@ -619,49 +634,39 @@ end
 
 def expand_dependencies
   @dependencies = []
-
   def push_dependencies
     if @pkg.is_binary?(@device[:architecture]) ||
        (!@pkg.in_upgrade && !@pkg.build_from_source && @device[:installed_packages].any? { |pkg| pkg[:name] == @pkg.name })
       # retrieve name of dependencies that doesn't contain :build tag
       check_deps = @pkg.dependencies.select {|k, v| !v.include?(:build)}.map {|k, v| k}
-    elsif @pkg.is_fake?
-      # retrieve name of all dependencies
-      check_deps = @pkg.dependencies.map {|k, v| k}
     else
       # retrieve name of all dependencies
       check_deps = @pkg.dependencies.map {|k, v| k}
     end
-
-    # remove a dependent package which is equal to the target
-    check_deps.select! {|name| @pkgName != name}
-
-    # add new dependencies at the beginning of array
-    @dependencies = check_deps.clone.concat(@dependencies)
-
     # check all dependencies recursively
     check_deps.each do |dep|
-      search dep, true
-      push_dependencies
+      # build unique dependencies list
+      unless @dependencies.include?(dep) || dep == @pkgName
+        @dependencies << dep
+        search dep, true
+        push_dependencies
+      end
     end
   end
-
   push_dependencies
-
-  @dependencies.uniq
 end
 
 def resolve_dependencies
-  dependencies = expand_dependencies
+  expand_dependencies
 
   # leave only not installed packages in dependencies
-  dependencies.select! {|name| @device[:installed_packages].none? {|pkg| pkg[:name] == name}}
+  @dependencies.select! {|name| @device[:installed_packages].none? {|pkg| pkg[:name] == name}}
 
-  return if dependencies.empty?
+  return if @dependencies.empty?
 
   puts "The following packages also need to be installed: "
 
-  dependencies.each do |dep|
+  @dependencies.each do |dep|
     print dep + " "
   end
 
@@ -680,7 +685,7 @@ def resolve_dependencies
   end
 
   if proceed
-    dependencies.each do |dep|
+    @dependencies.each do |dep|
       search dep
       install
     end
@@ -915,6 +920,17 @@ def list_command (args)
     list_available
   elsif args['installed']
     list_installed
+  end
+end
+
+def postinstall_command (args)
+  args["<name>"].each do |name|
+    set_package name, true
+    if @device[:installed_packages].any? do |elem| elem[:name] == name end
+      @pkg.postinstall
+    else
+      puts "Package #{name} is not installed. :(".lightred
+    end
   end
 end
 
