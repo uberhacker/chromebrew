@@ -25,25 +25,35 @@ class Firefox < Package
   depends_on 'libjpeg'
   depends_on 'libpng'
   depends_on 'libvpx'
+  depends_on 'nodebrew'
   depends_on 'nss'
   depends_on 'rust'
 
   def self.build
     # For detailed build instructions, see https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Simple_Firefox_build/Linux_and_MacOS_build_preparation.
+    ENV['AUTOCONF'] = CREW_PREFIX + '/bin/autoconf'
+    system "TMPDIR=#{CREW_PREFIX}/tmp cargo install cbindgen" unless File.exists? HOME + '/.cargo/bin/cbindgen'
+    node_ver = 'v8.15.0'
+    node_old = `nodebrew ls | fgrep 'current: ' | cut -d' ' -f2`.chomp
+    node_ver_installed = `nodebrew ls | grep -o #{node_ver} | head -1`.chomp
+    system "nodebrew install #{node_ver}" unless node_ver_installed == node_ver
+    system "nodebrew use #{node_ver}" unless node_old == node_ver
     Dir.chdir 'build' do
-    system '../configure',
-           "--prefix=#{CREW_PREFIX}",
-           "--libdir=#{CREW_LIB_PREFIX}",
-           '--with-system-bz2',
-           '--with-system-icu',
-           '--with-system-jpeg',
-           '--with-system-libevent',
-           '--with-system-libvpx',
-           '--with-system-nspr',
-           '--with-system-nss',
-           '--with-system-png',
-           '--with-system-zlib'
-    system 'make'
+      system '../configure',
+             "--prefix=#{CREW_PREFIX}",
+             "--libdir=#{CREW_LIB_PREFIX}",
+             '--with-system-bz2',
+             '--with-system-icu',
+             '--with-system-jpeg',
+             '--with-system-libevent',
+             '--with-system-libvpx',
+             '--with-system-nspr',
+             '--with-system-nss',
+             '--with-system-png',
+             '--with-system-zlib'
+      system 'make'
+      system "nodebrew uninstall #{node_ver}" unless node_ver_installed == node_ver
+      system "nodebrew use #{node_old}" unless node_old == "none"
     end
   end
 
