@@ -14,6 +14,7 @@ class Codeblocks < Package
 
   depends_on 'boost'
   depends_on 'gamin'
+  depends_on 'gtk2'
   depends_on 'hunspell'
   depends_on 'wxwidgets'
   depends_on 'sommelier'
@@ -22,7 +23,7 @@ class Codeblocks < Package
     system './configure',
            "--prefix=#{CREW_PREFIX}",
            "--libdir=#{CREW_LIB_PREFIX}",
-           '--with-contrib-plugins=all',
+           #'--with-contrib-plugins',
            '--with-boost=yes',
            '--with-x'
     system 'make'
