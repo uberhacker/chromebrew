@@ -3,21 +3,21 @@ require 'package'
 class Firefox < Package
   description 'Mozilla Firefox (or simply Firefox) is a free and open-source web browser'
   homepage 'https://www.mozilla.org/en-US/firefox/'
-  version '65.0.1'
-  source_url 'https://ftp.mozilla.org/pub/firefox/releases/65.0.1/source/firefox-65.0.1.source.tar.xz'
-  source_sha256 '67e517f6d1ea8aa5c8f32404b8756f3205c3550917a91a19b0a0edccc656a3cc'
+  version '65.0.2'
+  source_url 'https://ftp.mozilla.org/pub/firefox/releases/65.0.2/source/firefox-65.0.2.source.tar.xz'
+  source_sha256 '7d856a681fd8959f492679d0db3c3b787102665670f57cd9739ba9065702059f'
 
   binary_url ({
     aarch64: '',
      armv7l: '',
-       i686: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/65.0.1/linux-i686/en-US/firefox-65.0.1.tar.bz2',
-     x86_64: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/65.0.1/linux-x86_64/en-US/firefox-65.0.1.tar.bz2',
+       i686: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/65.0.2/linux-i686/en-US/firefox-65.0.2.tar.bz2',
+     x86_64: 'https://download-installer.cdn.mozilla.net/pub/firefox/releases/65.0.2/linux-x86_64/en-US/firefox-65.0.2.tar.bz2',
   })
   binary_sha256 ({
     aarch64: '',
      armv7l: '',
-       i686: '4f78c2c7cc56e5479415206e66039bd8634811dc311c2b53f22c6856fd98aa53',
-     x86_64: 'a89aae224b872d1b5e17ab213ca04a711ae72061828685f999ea2f52784acb56',
+       i686: '8cec05eacf4cca3124c59d41fffea6059cdb6dd47c3590cd0c60dc66ca75d2f4',
+     x86_64: 'f7cd14a461d274ea213c79a35ba00157e7e23b573648c90825b277482effb459',
   })
 
   depends_on 'bz2'
@@ -25,9 +25,14 @@ class Firefox < Package
   depends_on 'libjpeg'
   depends_on 'libpng'
   depends_on 'libvpx'
+  depends_on 'llvm'
+  depends_on 'nasm'
   depends_on 'nodebrew'
   depends_on 'nss'
+  depends_on 'pulseaudio'
   depends_on 'rust'
+  depends_on 'gtk3'
+  depends_on 'sommelier'
 
   def self.build
     # For detailed build instructions, see https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Simple_Firefox_build/Linux_and_MacOS_build_preparation.
