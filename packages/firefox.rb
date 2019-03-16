@@ -22,8 +22,6 @@ class Firefox < Package
 
   depends_on 'bz2'
   depends_on 'libevent'
-  depends_on 'libjpeg'
-  depends_on 'libpng'
   depends_on 'libvpx'
   depends_on 'llvm'
   depends_on 'nasm'
@@ -31,7 +29,7 @@ class Firefox < Package
   depends_on 'nss'
   depends_on 'pulseaudio'
   depends_on 'rust'
-  depends_on 'gtk3'
+  depends_on 'gtk2'
   depends_on 'sommelier'
 
   def self.build
@@ -49,12 +47,10 @@ class Firefox < Package
              "--libdir=#{CREW_LIB_PREFIX}",
              '--with-system-bz2',
              '--with-system-icu',
-             '--with-system-jpeg',
              '--with-system-libevent',
              '--with-system-libvpx',
              '--with-system-nspr',
              '--with-system-nss',
-             '--with-system-png',
              '--with-system-zlib'
       system 'make'
       system "nodebrew uninstall #{node_ver}" unless node_ver_installed == node_ver
