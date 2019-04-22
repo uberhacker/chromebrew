@@ -12,8 +12,11 @@ class Timeshift < Package
   binary_sha256 ({
   })
 
+  depends_on 'cronie'
   depends_on 'gtkvte'
   depends_on 'libgee'
+  depends_on 'rsync'
+  depends_on 'sommelier'
 
   def self.build
     system 'make all'
