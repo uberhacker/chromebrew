@@ -20,6 +20,6 @@ class Timeshift < Package
   end
 
   def self.install
-    system "make", "PREFIX=#{CREW_PREFIX}", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system "make", "prefix=#{CREW_DEST_PREFIX}", "sysconfdir=#{CREW_DEST_PREFIX}/etc", "install"
   end
 end
