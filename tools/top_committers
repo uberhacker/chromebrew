@@ -1,0 +1,41 @@
+#!/bin/bash
+DIR=$(basename $(pwd))
+if [ "$DIR" != "tools" ]; then
+  echo "This command must be run from the tools directory."
+  exit 1
+fi
+if test $1; then
+  re='^[0-9]+$'
+  if ! [[ $1 =~ $re ]]; then
+    echo "error: Not a number"
+    exit 1
+  fi
+  if [[ $1 < 1 ]]; then
+    echo "error: Number must be greater than 0"
+    exit 1
+  fi
+  TOP=$1
+else
+  TOP=10
+fi
+i=0
+p=0
+IFS=$'\n'
+git log | grep ^Author: | cut -d'<' -f2 | cut -d'>' -f1 | sort | uniq > /tmp/committers.txt
+find ../packages -name '*.rb' -exec git blame -e {} \; | grep class | grep Package > /tmp/packages.txt
+for u in $(cat /tmp/committers.txt); do
+  c=$(grep -c "$u" /tmp/packages.txt)
+  if [ "$c" != "0" ]; then
+    echo $(printf "%03d: %s" $c $u) >> /tmp/all.txt
+    i=$((i+1))
+    p=$((p+c))
+  fi
+done
+sort -r /tmp/all.txt | head -$TOP > /tmp/top.txt
+cat /tmp/top.txt
+echo "Total committers: $i"
+echo "Total packages: $p"
+rm -f /tmp/committers.txt
+rm -f /tmp/packages.txt
+rm -f /tmp/all.txt
+rm -f /tmp/top.txt

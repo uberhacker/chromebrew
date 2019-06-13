@@ -1,0 +1,23 @@
+#!/bin/bash
+DIR=$(basename $(pwd))
+if [ "$DIR" != "tools" ]; then
+  echo "This command must be run from the tools directory."
+  exit 1
+fi
+i=0
+p=0
+IFS=$'\n'
+git log | grep ^Author: | cut -d'<' -f2 | cut -d'>' -f1 | sort | uniq > /tmp/committers.txt
+find ../packages -name '*.rb' -exec git blame -e {} \; | grep class | grep Package > /tmp/packages.txt
+for u in $(cat /tmp/committers.txt); do
+  c=$(grep -c "$u" /tmp/packages.txt)
+  if [ "$c" != "0" ]; then
+    echo "$u: $c"
+    i=$((i+1))
+    p=$((p+c))
+  fi
+done
+echo "Total committers: $i"
+echo "Total packages: $p"
+rm -f /tmp/committers.txt
+rm -f /tmp/packages.txt
