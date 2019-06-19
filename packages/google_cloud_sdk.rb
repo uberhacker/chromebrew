@@ -3,15 +3,15 @@ require 'package'
 class Google_cloud_sdk < Package
   description 'Command-line interface for Google Cloud Platform products and services'
   homepage 'https://cloud.google.com/sdk/'
-  version '220.0.0'
+  version '236.0.0'
 
   case ARCH
   when 'i686'
-    source_url 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-220.0.0-linux-x86.tar.gz'
-    source_sha256 'd347562e5a076330f96506285c01e9c9f6e594524c54e02842da7e63bdfe264d'
+    source_url 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-236.0.0-linux-x86.tar.gz'
+    source_sha256 '6ea8595dff4926318e408879ef2ac46329b470d6ed76010ae19bfa6aaad5cdee'
   when 'x86_64'
-    source_url 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-220.0.0-linux-x86_64.tar.gz'
-    source_sha256 'a2205e35b11136004d52d47774762fbec9145bf0bda74ca506f52b71452c570e'
+    source_url 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-236.0.0-linux-x86_64.tar.gz'
+    source_sha256 'cfa7ff7c67d58d5b1bd2ae623a007c23d94937d8bc898b7933c647c660860659'
   end
 
   binary_url ({
@@ -23,14 +23,13 @@ class Google_cloud_sdk < Package
   depends_on 'xdg_base'
 
   def self.install
-    FileUtils.mkdir_p "#{ENV['HOME']}/.config/gcloud"
     FileUtils.mkdir_p "#{CREW_DEST_HOME}/.config/gcloud"
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/google_cloud_sdk"
-    system "cp -r . #{CREW_DEST_PREFIX}/share/google_cloud_sdk"
+    system "cp -a . #{CREW_DEST_PREFIX}/share/google_cloud_sdk"
     FileUtils.cd("#{CREW_DEST_PREFIX}/share/google_cloud_sdk") do
       system "./install.sh \
               --usage-reporting false \
-              --rc-path $HOME/.bashrc \
+              --rc-path #{ENV['HOME']}/.bashrc \
               --quiet"
     end
     system "mkdir -p #{CREW_DEST_PREFIX}/bin"

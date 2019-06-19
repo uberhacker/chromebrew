@@ -3,9 +3,9 @@ require 'package'
 class Composer < Package
   description 'Dependency Manager for PHP'
   homepage 'https://getcomposer.org/'
-  version '1.7.3'
-  source_url 'https://github.com/composer/composer/archive/1.7.3.tar.gz'
-  source_sha256 'bad4df3e17eca61d12a4cca0ace934659382ef38a6234be384e79d39e5945c0d'
+  version '1.8.6'
+  source_url 'https://github.com/composer/composer/archive/1.8.6.tar.gz'
+  source_sha256 'abd42546a0af0c4daf78b49925dc9855b06a4ed726db6c2a43161e3b5dc12436'
 
   binary_url ({
   })
@@ -16,24 +16,24 @@ class Composer < Package
   depends_on 'xdg_base'
 
   def self.preinstall
-    if Dir.exists? "$HOME/.config"
+    if Dir.exists?("#{HOME}/.config") && !File.symlink?("#{HOME}/.config")
       # Save any existing configuration
-      system "cp -r $HOME/.config #{CREW_PREFIX}"
+      system "cp -r #{HOME}/.config #{CREW_PREFIX}" unless Dir.empty? "#{HOME}/.config"
     else
       # Remove the symlink, if it exists
-      system "rm -f $HOME/.config"
+      system "rm -f #{HOME}/.config"
     end
   end
 
   def self.install
     system "php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\""
-    abort 'Checksum mismatch. :/ Try again.'.lightred unless Digest::SHA384.hexdigest( File.read('composer-setup.php') ) == '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8' 
+    abort 'Checksum mismatch. :/ Try again.'.lightred unless Digest::SHA384.hexdigest( File.read('composer-setup.php') ) == '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5'
     system "mkdir -p #{CREW_DEST_PREFIX}/bin"
-    system "php composer-setup.php --install-dir=#{CREW_DEST_PREFIX}/bin --filename=composer --version=1.7.3"
+    system "php composer-setup.php --install-dir=#{CREW_DEST_PREFIX}/bin --filename=composer --version=#{version}"
     system "mkdir -p #{CREW_DEST_PREFIX}/.config"
-    system "cp -r $HOME/.config/composer #{CREW_DEST_PREFIX}/.config"
-    system "rm -rf $HOME/.config"
-    system "ln -s #{CREW_PREFIX}/.config $HOME/.config"
+    system "cp -r #{HOME}/.config/composer #{CREW_DEST_PREFIX}/.config"
+    system "rm -rf #{HOME}/.config"
+    system "ln -s #{CREW_PREFIX}/.config #{HOME}/.config"
   end
 
   def self.postinstall

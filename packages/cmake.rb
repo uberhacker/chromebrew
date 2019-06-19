@@ -3,29 +3,28 @@ require 'package'
 class Cmake < Package
   description 'CMake is an open-source, cross-platform family of tools designed to build, test and package software.'
   homepage 'https://cmake.org/'
-  version '3.12.2'
-  source_url 'https://cmake.org/files/v3.12/cmake-3.12.2.tar.gz'
-  source_sha256 '0f97485799e51a7070cc11494f3e02349b0fc3a24cc12b082e737bf67a0581a4'
+  version '3.14.3'
+  source_url 'https://cmake.org/files/v3.14/cmake-3.14.3.tar.gz'
+  source_sha256 '215d0b64e81307182b29b63e562edf30b3875b834efdad09b3fcb5a7d2f4b632'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.12.2-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.12.2-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.12.2-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.12.2-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.14.3-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.14.3-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.14.3-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/cmake-3.14.3-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '8c69b2eb83e6591925ba720049e18418ccb58d8fa217285159fb9a0d5caf4788',
-     armv7l: '8c69b2eb83e6591925ba720049e18418ccb58d8fa217285159fb9a0d5caf4788',
-       i686: '753b5f083571e63727f4706b6bd453cf07db7dff7c4853bfcad1a03c179922c5',
-     x86_64: 'bd60b37bb2f1df504af1e73577be7980c9cbc6aa4fb15e46143e25f1ef1e8aea',
+    aarch64: '53ff9ffbb8894a4fa0951125223001085f3854058c83485baa99305b37a40f10',
+     armv7l: '53ff9ffbb8894a4fa0951125223001085f3854058c83485baa99305b37a40f10',
+       i686: '720e5aeafd1435966efe5979a1a88025540c792a71227473a351be61aabd8362',
+     x86_64: '68bb956136478169cc74d43e59a3c055d9e565c6f0b93a1fcbf7e56f3912d580',
   })
 
   def self.build
     if Dir.exist? "#{CREW_PREFIX}/include/ncursesw"
       system 'sed -i "51s,$,\n  set(CURSES_INCLUDE_PATH ' + "#{CREW_PREFIX}/include/ncursesw" + ')," Modules/FindCurses.cmake'
     end
-    system './bootstrap',
-      "--prefix=#{CREW_PREFIX}"
+    system "./bootstrap --prefix=#{CREW_PREFIX}"
     system 'make'
   end
 

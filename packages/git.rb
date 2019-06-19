@@ -3,39 +3,46 @@ require 'package'
 class Git < Package
   description 'Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.'
   homepage 'https://git-scm.com/'
-  version '2.19.0'
-  source_url 'https://github.com/git/git/archive/v2.19.0.tar.gz'
-  source_sha256 'c4146d94d1c74de0d099bcd6ba22cc44f799332a46146ede4ad9c9f67971aa28'
+  version '2.21.0'
+  source_url 'https://github.com/git/git/archive/v2.21.0.tar.gz'
+  source_sha256 '7a601275abcc6ff51cc79a6d402e83c90ae37d743b0b8d073aa009dd4b22d432'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.19.0-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.21.0-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.21.0-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.21.0-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.21.0-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: 'c8ed38f5e4e8ce268f42c0f65c47b8a18674c9704ed8a9eefb376aedb60ced69',
-     armv7l: 'c8ed38f5e4e8ce268f42c0f65c47b8a18674c9704ed8a9eefb376aedb60ced69',
-       i686: '3c0e0b6fcfd0c07b2722c6c89998133281a49a5d265b3fb7f3b5309247909bf3',
-     x86_64: '80cc91e879dde9578668ea091a5d5f3129b57231b334bc4aa4cf4a5739f4feee',
+    aarch64: 'b75f477d3831241a03dc72a130d64ca1755bb0cd8d8a56fac24940de6f12ae87',
+     armv7l: 'b75f477d3831241a03dc72a130d64ca1755bb0cd8d8a56fac24940de6f12ae87',
+       i686: '20e4a91ebace3b2d7f1744e80007cef5726a43b65b2a218c6ca0ab282e1333b8',
+     x86_64: 'd3a74f5cb87e17c6108fd4a1fa297f34ce154f56301b63911ee3f603a0faa756',
   })
 
   depends_on 'curl' => :build
   depends_on 'python27' => :build     # requires python2
 
   # need to build using single core
-  @make_cmd = "make -j1 prefix=#{CREW_PREFIX} CC=gcc PERL_PATH=#{CREW_PREFIX}/bin/perl PYTHON_PATH=#{CREW_PREFIX}/bin/python2"
+  @make_cmd = "make -j1"
 
   def self.build
-    system "autoconf"
-    system "./configure --without-tcltk"
+    system "autoreconf -i"
+    system "./configure",
+           "--without-tcltk",
+           "--prefix=#{CREW_PREFIX}",
+           "--libdir=#{CREW_LIB_PREFIX}",
+           "--with-perl=#{CREW_PREFIX}/bin/perl",
+           "--with-python=#{CREW_PREFIX}/bin/python2",
+           "--with-gitconfig=#{CREW_PREFIX}/etc/gitconfig",
+           "--with-gitattributes=#{CREW_PREFIX}/etc/gitattributes"
     system "#{@make_cmd} all"
   end
 
   def self.install
     system "#{@make_cmd} DESTDIR=#{CREW_DEST_DIR} install"
-    system "mkdir -p #{CREW_DEST_PREFIX}/share/git-completion"
-    system "cp -r contrib/completion/* #{CREW_DEST_PREFIX}/share/git-completion"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/git-completion"
+    system "cp -a contrib/completion/. #{CREW_DEST_PREFIX}/share/git-completion/"
   end
 
   def self.postinstall
@@ -50,10 +57,5 @@ class Git < Package
     puts "echo 'fi' >> ~/.bashrc".lightblue
     puts "source ~/.bashrc".lightblue
     puts
-  end
-
-  def self.check
-    # Skip several t9010-svn-fe and t9011-svn-da tests since they fail.
-    #system "GIT_SKIP_TESTS='t9010.16 t9010.20 t9011.1[49] t9011.2[0346] t9011.31 ' #{@make_cmd} test"
   end
 end
