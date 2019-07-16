@@ -17,6 +17,10 @@ class Installwatch < Package
   end
 
   def self.install
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/bin"
+    FileUtils.mkdir_p "#{CREW_DEST_LIB_PREFIX}"
     system "make PREFIX=#{CREW_DEST_PREFIX} LIBDIR=#{CREW_DEST_LIB_PREFIX} VERSION=#{version} install"
+    system "sed -i 's,PREFIX=#{CREW_DEST_PREFIX},PREFIX=#{CREW_PREFIX},' #{CREW_DEST_PREFIX}/bin/installwatch"
+    system "sed -i 's,LIBDIR=\$PREFIX/lib,LIBDIR=#{CREW_LIB_PREFIX},' #{CREW_DEST_PREFIX}/bin/installwatch"
   end
 end
