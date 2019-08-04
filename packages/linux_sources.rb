@@ -14,6 +14,12 @@ class Linux_sources < Package
     FileUtils.mkdir_p src_dir
     Dir.chdir src_dir do
       system "wget #{source_url}"
+      case KERNEL_VERSION
+      when '3.18'
+      when '4.4.178'
+        sha256 = 'c3598c22b7994b3bebc3059e8ab85bc212c53550eb401baab3f29f8d007a043d'
+      end
+      abort 'Checksum mismatch. :/ Try again.'.lightred unless Digest::SHA256.hexdigest( File.read("#{linux_ver}.tar.xz") ) == sha256
       system "tar xvf #{linux_ver}.tar.xz"
       FileUtils.mv "#{linux_ver}", 'linux'
       Dir.chdir 'linux' do
