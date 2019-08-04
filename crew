@@ -267,6 +267,8 @@ def const (var)
       'CREW_PREFIX',
       'CREW_VERSION',
       'HOME',
+      'KERNEL',
+      'KERNEL_VERSION',
       'LIBC_VERSION',
       'USER'
     ]

@@ -1,6 +1,6 @@
 # Defines common constants used in different parts of crew
 
-CREW_VERSION = '1.2.4'
+CREW_VERSION = '1.2.5'
 
 ARCH = `uname -m`.strip
 ARCH_LIB = if ARCH == 'x86_64' then 'lib64' else 'lib' end
@@ -45,3 +45,6 @@ CREW_NOT_STRIP = ENV["CREW_NOT_STRIP"]
 USER = `whoami`.chomp
 
 CHROMEOS_RELEASE = `grep CHROMEOS_RELEASE_CHROME_MILESTONE= /etc/lsb-release | cut -d'=' -f2`.chomp
+
+KERNEL = `uname -r | cut -d'.' -f1`.chomp + '.x'
+KERNEL_VERSION = `uname -r | cut -d'-' -f1`.chomp
