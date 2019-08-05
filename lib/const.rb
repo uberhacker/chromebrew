@@ -46,5 +46,12 @@ USER = `whoami`.chomp
 
 CHROMEOS_RELEASE = `grep CHROMEOS_RELEASE_CHROME_MILESTONE= /etc/lsb-release | cut -d'=' -f2`.chomp
 
-KERNEL = `uname -r | cut -d'.' -f1`.chomp + '.x'
-KERNEL_VERSION = `uname -r | cut -d'-' -f1`.chomp
+kernel_major = `uname -r | cut -d'.' -f1`.chomp
+kernel_minor = `uname -r | cut -d'.' -f2`.chomp
+kernel_patch = `uname -r | cut -d'.' -f3 | cut -d'-' -f1`.chomp
+KERNEL = kernel_major + '.x'
+unless kernel_patch == '0'
+  KERNEL_VERSION = kernel_major + '.' + kernel_minor + '.' + kernel_patch
+else
+  KERNEL_VERSION = kernel_major + '.' + kernel_minor
+end
