@@ -26,6 +26,11 @@ class Rsu_client < Package
 
   def self.build
     system 'cpan -T install Archive::Extract exit'
+    system 'cpan -T install Alien::wxWidgets exit'
+    system 'cpan -T install Wx::WebView exit'
+    system 'cpan -T install List::MoreUtils exit'
+    system 'cpan -T install IO::Stringy exit'
+    system 'cpan -T install Config::IniFiles exit'
   end
 
   def self.install
