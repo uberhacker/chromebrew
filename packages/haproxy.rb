@@ -2,32 +2,31 @@ require 'package'
 
 class Haproxy < Package
   description 'The Reliable, High Performance TCP/HTTP Load Balancer.'
-  homepage 'http://www.haproxy.org/'
-  version '1.7.9'
-  source_url 'http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz'
-  source_sha256 '1072337e54fa188dc6e0cfe3ba4c2200b07082e321cbfe5a0882d85d54db068e'
+  homepage 'https://www.haproxy.org/'
+  version '2.0.3'
+  source_url 'https://www.haproxy.org/download/2.0/src/haproxy-2.0.3.tar.gz'
+  source_sha256 'aac1ff3e5079997985b6560f46bf265447d0cd841f11c4d77f15942c9fe4b770'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-1.7.9-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-1.7.9-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-1.7.9-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-1.7.9-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-2.0.3-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-2.0.3-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-2.0.3-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/haproxy-2.0.3-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '709ab2222103fb450310dd184b37af7181322773109e1c41c516b924cbc9c86e',
-     armv7l: '709ab2222103fb450310dd184b37af7181322773109e1c41c516b924cbc9c86e',
-       i686: '94849f2aee0a336997e19134d1a27f9f2a32daa57a8cccdec797ed4c9c0057f1',
-     x86_64: '6bad205056d137fc998b01f229bdaa782fe2d859ef5723f2bbe73f473a95a2ff',
+    aarch64: 'a39b9aed16ef1c7847900c7e4d35deaf7fa3bb704f95a15544db010798b276c0',
+     armv7l: 'a39b9aed16ef1c7847900c7e4d35deaf7fa3bb704f95a15544db010798b276c0',
+       i686: '44b553dcc063d51b090a51c67c2755a5d6412215cc8c8804348d783fe1195cac',
+     x86_64: '4de3e8213ea510996e81039fbd6dd9e5d4b15de6728cded2a0a12763a56d5f2a',
   })
 
-  depends_on 'openssl'
-  depends_on 'pcre'
+  depends_on 'pcre2'
 
   def self.build
-    system "make TARGET=linux26 USE_OPENSSL=1 USE_PCRE=1 USE_ZLIB=1"
+    system 'make', 'TARGET=linux-glibc', 'USE_OPENSSL=1', 'USE_PCRE2_JIT=1', 'USE_ZLIB=1', 'DEBUG=-s'
   end
 
   def self.install
-    system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
   end
 end

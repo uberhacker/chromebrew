@@ -3,21 +3,21 @@ require 'package'
 class Eventstat < Package
   description 'Eventstat periodically dumps out the current kernel event state.'
   homepage 'http://kernel.ubuntu.com/~cking/eventstat/'
-  version '0.04.03'
-  source_url 'http://kernel.ubuntu.com/~cking/tarballs/eventstat/eventstat-0.04.03.tar.gz'
-  source_sha256 '689d8ef193cc792edc5bf4f66cb6626a1acb78eb79f85b0ee5db744eb78b4378'
+  version '0.04.06'
+  source_url 'https://kernel.ubuntu.com/~cking/tarballs/eventstat/eventstat-0.04.06.tar.gz'
+  source_sha256 'b5bd29cf02f0c7c1a2d59c7d012e51220f83e2e6ff0829dec4d6cb87a1ec53d6'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.03-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.03-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.03-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.03-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.06-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.06-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.06-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/eventstat-0.04.06-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: 'a232969e8df3019c6e3745d1d9c9b4216946fdfb8249e1675e73d41f6072f236',
-     armv7l: 'a232969e8df3019c6e3745d1d9c9b4216946fdfb8249e1675e73d41f6072f236',
-       i686: '818cfbcce8d75f170854caac30797a63764c800f876ee5718069c13cea2ffb99',
-     x86_64: '130e1ce007648c817123d714c20d028987b8f8ee017dc5fe85e61505bacc18c5',
+    aarch64: 'c6019e27bf05402a21cfe420fbb5f4c49c6a8f9c34ab47fee9425279fc5cf9a8',
+     armv7l: 'c6019e27bf05402a21cfe420fbb5f4c49c6a8f9c34ab47fee9425279fc5cf9a8',
+       i686: 'a06352f14faba8e3293168df46f134094dca45bf972737409003c9e2b1cc5f0b',
+     x86_64: 'ccd7916d0f4561b82ac923be2d71056a453edd8998b56eeac4aa84b9aeda83c2',
   })
 
   def self.build
@@ -26,6 +26,6 @@ class Eventstat < Package
 
   def self.install
     system "install -Dm755 eventstat #{CREW_DEST_PREFIX}/bin/eventstat"
-    system "install -Dm644 eventstat.8 #{CREW_DEST_PREFIX}/man/man8/eventstat.8"
+    system "install -Dm644 eventstat.8 #{CREW_DEST_PREFIX}/share/man/man8/eventstat.8"
   end
 end
