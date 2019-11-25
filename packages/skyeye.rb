@@ -1,7 +1,7 @@
 require 'package'
 
 class Skyeye < Package
-  description 'SkyEye is a very fast full system simulator which takes llvm as IR of dynmic compiled framework.'
+  description 'SkyEye is a very fast full system simulator which takes llvm as IR of dynamic compiled framework.'
   homepage 'https://sourceforge.net/projects/skyeye/'
   version '1.3.5-rc1'
   source_url 'https://downloads.sourceforge.net/project/skyeye/skyeye/skyeye-1.3.5/skyeye-1.3.5_rc1.tar.bz2'
