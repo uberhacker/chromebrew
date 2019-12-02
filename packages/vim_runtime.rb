@@ -3,21 +3,21 @@ require 'package'
 class Vim_runtime < Package
   description 'Vim is a highly configurable text editor built to make creating and changing any kind of text very efficient. (shared runtime)'
   homepage 'http://www.vim.org/'
-  version '8.1.0648'
-  source_url 'https://github.com/vim/vim/archive/v8.1.0648.tar.gz'
-  source_sha256 '7e6ad44dbb8fda0aca91c22fa0dcaed2d845cf00c26d6d3df3bfaa38c9da222a'
+  version '8.1.2234'
+  source_url 'https://github.com/vim/vim/archive/v8.1.2234.tar.gz'
+  source_sha256 '08c8f8cdc41583e1604fdb27697f5cce7cf6ca01506b7ad3c6fe6d5ea722878b'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.0648-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.0648-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.0648-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.0648-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.2234-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.2234-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.2234-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/vim_runtime-8.1.2234-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '68534f604cec1223f0de74c964fde11d15313967f33a485be03f0bda09e1b87b',
-     armv7l: '68534f604cec1223f0de74c964fde11d15313967f33a485be03f0bda09e1b87b',
-       i686: 'e0acbd72d697053d891f9dddc3d1b6325370af50d115c70a983ab959d7d5d230',
-     x86_64: '1eaf66995f199d6360391a9aacb0d5ab997954c21862c36502991544c08a4efc',
+    aarch64: 'c780dd46fb51a82bd04dff25ff95c953e6eeb951fd82b0971827ef453f82515c',
+     armv7l: 'c780dd46fb51a82bd04dff25ff95c953e6eeb951fd82b0971827ef453f82515c',
+       i686: '3ca411351bad4c2d3083c0308ed56c421711b9058b87f9a1dfb75116213b6940',
+     x86_64: '833a5a591bd16f6f1b847f73d8de291b06137abe579868758f3d03334146ca06',
   })
 
   depends_on 'python27' => :build
@@ -55,12 +55,12 @@ class Vim_runtime < Package
     system "make", "VIMRCLOC=#{CREW_PREFIX}/etc", "DESTDIR=#{CREW_DEST_DIR}", "install"
 
     # bin and man will be provided by the 'vim' packages
-    system "rm", "-r", "#{CREW_DEST_PREFIX}/bin"
-    system "rm", "-r", "#{CREW_DEST_PREFIX}/share/man"
+    FileUtils.rm_r "#{CREW_DEST_PREFIX}/bin"
+    FileUtils.rm_r "#{CREW_DEST_PREFIX}/share/man"
 
     # remove desktop and icon files for the terminal package
-    system "rm", "-r", "#{CREW_DEST_PREFIX}/share/applications"
-    system "rm", "-r", "#{CREW_DEST_PREFIX}/share/icons"
+    FileUtils.rm_r "#{CREW_DEST_PREFIX}/share/applications"
+    FileUtils.rm_r "#{CREW_DEST_PREFIX}/share/icons"
 
     # add sane defaults and simulate some XDG support
     FileUtils.mkdir_p("#{CREW_DEST_PREFIX}/share/vim/vimfiles")
@@ -121,4 +121,3 @@ class Vim_runtime < Package
     EOF
   end
 end
-

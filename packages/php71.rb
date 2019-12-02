@@ -1,23 +1,28 @@
 require 'package'
 
-class Php7 < Package
+class Php71 < Package
   description 'PHP is a popular general-purpose scripting language that is especially suited to web development.'
   homepage 'http://www.php.net/'
-  version '7.3.6'
-  source_url 'https://php.net/distributions/php-7.3.6.tar.xz'
-  source_sha256 'fefc8967daa30ebc375b2ab2857f97da94ca81921b722ddac86b29e15c54a164'
+  version '7.1.33'
+  source_url 'https://php.net/distributions/php-7.1.33.tar.xz'
+  source_sha256 'bd7c0a9bd5433289ee01fd440af3715309faf583f75832b64fe169c100d52968'
+
+  if ARGV[0] == 'install'
+    phpver = `php -v 2> /dev/null | head -1 | cut -d' ' -f2`.chomp
+    abort "PHP version #{phpver} already installed.".lightgreen unless "#{phpver}" == ""
+  end
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.3.6-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.3.6-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.3.6-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.3.6-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.1.33-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.1.33-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.1.33-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php7-7.1.33-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '8483fc02476688ae24151ee5c68a4232d27db4666bf8b38c96ede735348b5305',
-     armv7l: '8483fc02476688ae24151ee5c68a4232d27db4666bf8b38c96ede735348b5305',
-       i686: '0ed0f04f51244e2177a553a57bc78d38685213628cc0dbc645e142d15b3c58f7',
-     x86_64: '20ee5c4bfab8385ebb67494628d5fc9acb72bfc68ff0f26a1411f57e3b0d8827',
+    aarch64: '1a25458dca5188809187c717fc76864c71c896ac51032b4b5395875310f9bd6c',
+     armv7l: '1a25458dca5188809187c717fc76864c71c896ac51032b4b5395875310f9bd6c',
+       i686: 'ee2de86e059df317fff885d5e0df2db944890a675be5c23d81291779e23ac23a',
+     x86_64: '4a61fb06d921969bf16d8154d68f34c2f5f0e2195503cb62fc964f7908ed962e',
   })
 
   depends_on 'libgcrypt'
@@ -60,7 +65,7 @@ class Php7 < Package
            "--infodir=#{CREW_PREFIX}/info",
            "--libdir=#{CREW_LIB_PREFIX}",
            "--localstatedir=#{CREW_PREFIX}/tmp",
-           "--mandir=#{CREW_PREFIX}/man",
+           "--mandir=#{CREW_PREFIX}/share/man",
            "--sbindir=#{CREW_PREFIX}/bin",
            "--with-config-file-path=#{CREW_PREFIX}/etc",
            "--with-libdir=#{ARCH_LIB}",

@@ -3,21 +3,21 @@ require 'package'
 class Git < Package
   description 'Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.'
   homepage 'https://git-scm.com/'
-  version '2.22.0'
-  source_url 'https://github.com/git/git/archive/v2.22.0.tar.gz'
-  source_sha256 'd2557e9d6a90819cca463b7f2a7b30fd62d8ccc9760c8453f078e936559cb017'
+  version '2.24.0'
+  source_url 'https://github.com/git/git/archive/v2.24.0.tar.gz'
+  source_sha256 '6b96ba03bc9e3ae5b8fb32b4bd8546298bdd792995a5d4c87f1f92c3c08aedb5'
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.22.0-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.22.0-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.22.0-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.22.0-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.24.0-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.24.0-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.24.0-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/git-2.24.0-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: '1e52aff31745a6ad134e807f151e8e6fd519bdd69c2f5ec9069661f7c66561a2',
-     armv7l: '1e52aff31745a6ad134e807f151e8e6fd519bdd69c2f5ec9069661f7c66561a2',
-       i686: '11d522ecb99eb1ddb78166f30a635012107e6688da1c686263a4135dbf928dcd',
-     x86_64: 'ce8aee90b5d8c477d12f9e99f541180375aaf5af2d4e9c2b8a2598d2d8e53565',
+    aarch64: '6bc2c92505a198a56a1da26cb29d0ac94672ee7659efa32a14633ebf7a7a2915',
+     armv7l: '6bc2c92505a198a56a1da26cb29d0ac94672ee7659efa32a14633ebf7a7a2915',
+       i686: '426aae2dff8c2b0d19858b293c8e3ead63ba5040de8b0b29e9c6c659bd3173cd',
+     x86_64: 'e2896c439c74afad22b01f022fead0ee9142abcf66c346059aa53acf97f526ab',
   })
 
   depends_on 'curl' => :build
@@ -25,12 +25,12 @@ class Git < Package
   depends_on 'libiconv'
 
   # need to build using single core
-  @make_cmd = "make -j1"
+  @make_cmd = 'make -j1'
 
   def self.build
-    system "autoreconf -i"
-    system "./configure",
-           "--without-tcltk",
+    system 'autoreconf -i'
+    system './configure',
+           '--without-tcltk',
            "--prefix=#{CREW_PREFIX}",
            "--libdir=#{CREW_LIB_PREFIX}",
            "--with-perl=#{CREW_PREFIX}/bin/perl",

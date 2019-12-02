@@ -254,6 +254,7 @@ def const (var)
       'ARCH_LIB',
       'CHROMEOS_RELEASE',
       'CREW_BREW_DIR',
+      'CREW_BUILD',
       'CREW_CONFIG_PATH',
       'CREW_DEST_DIR',
       'CREW_DEST_HOME',
@@ -664,7 +665,7 @@ def resolve_dependencies
 
   i = 0
   last_deps = []
-  last_packages = ["curl", "gtk3", "sommelier"]
+  last_packages = ["curl", "mandb", "gtk3", "sommelier"]
   @dependencies.each do |dep|
     if last_packages.include?(dep)
       @dependencies.delete_at(i)
