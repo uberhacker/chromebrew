@@ -15,6 +15,8 @@ class Elogind < Package
   depends_on 'meson' => :build
   depends_on 'dbus'
   depends_on 'glib'
+  depends_on 'gperf'
+  depends_on 'libgudev'
   depends_on 'libcap'
   depends_on 'linux_pam'
   depends_on 'pcre2'
