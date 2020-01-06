@@ -38,8 +38,8 @@ class Elogind < Package
 
   def self.install
     system "DESTDIR=#{CREW_DEST_DIR} ninja -C _build install"
-    FileUtils.mv "#{CREW_DEST_DIR}/lib", "#{CREW_DEST_PREFIX}"
     FileUtils.mv Dir.glob("#{CREW_DEST_DIR}/bin/*"), "#{CREW_DEST_PREFIX}/bin"
+    FileUtils.mv Dir.glob("#{CREW_DEST_DIR}/lib/*"), "#{CREW_DEST_LIB_PREFIX}"
     FileUtils.mv Dir.glob("#{CREW_DEST_DIR}/#{ARCH_LIB}/*"), "#{CREW_DEST_LIB_PREFIX}" if ARCH == 'x86_64'
   end
 end
