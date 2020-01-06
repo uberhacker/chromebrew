@@ -13,6 +13,7 @@ class Polkit < Package
   })
 
   depends_on 'elogind'
+  depends_on 'gtk_doc'
   depends_on 'mozjs'
 
   def self.patch
