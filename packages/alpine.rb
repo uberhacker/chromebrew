@@ -19,7 +19,7 @@ class Alpine < Package
            --disable-maintainer-mode \
            --prefix=#{CREW_PREFIX} \
            --libdir=#{CREW_LIB_PREFIX} \
-           CPPFLAGS='-I#{CREW_PREFIX}/include/openssl'"
+           --with-include-path=#{CREW_PREFIX}/include/openssl:#{CREW_PREFIX}include/ncursesw"
     system 'make'
   end
 
