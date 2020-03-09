@@ -3,9 +3,9 @@ require 'package'
 class Php74 < Package
   description 'PHP is a popular general-purpose scripting language that is especially suited to web development.'
   homepage 'http://www.php.net/'
-  version '7.4.1'
-  source_url 'https://www.php.net/distributions/php-7.4.1.tar.xz'
-  source_sha256 '561bb866bdd509094be00f4ece7c3543ec971c4d878645ee81437e291cffc762'
+  version '7.4.3'
+  source_url 'https://www.php.net/distributions/php-7.4.3.tar.xz'
+  source_sha256 'cf1f856d877c268124ded1ede40c9fb6142b125fdaafdc54f855120b8bc6982a'
 
   if ARGV[0] == 'install'
     phpver = `php -v 2> /dev/null | head -1 | cut -d' ' -f2`.chomp
@@ -13,24 +13,28 @@ class Php74 < Package
   end
 
   binary_url ({
-    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.1-chromeos-armv7l.tar.xz',
-     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.1-chromeos-armv7l.tar.xz',
-       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.1-chromeos-i686.tar.xz',
-     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.1-chromeos-x86_64.tar.xz',
+    aarch64: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.3-chromeos-armv7l.tar.xz',
+     armv7l: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.3-chromeos-armv7l.tar.xz',
+       i686: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.3-chromeos-i686.tar.xz',
+     x86_64: 'https://dl.bintray.com/chromebrew/chromebrew/php74-7.4.3-chromeos-x86_64.tar.xz',
   })
   binary_sha256 ({
-    aarch64: 'fa52e200025cdac6033c8a406be7a396ed442e13f0d8d8f88c93e3c819a5b56e',
-     armv7l: 'fa52e200025cdac6033c8a406be7a396ed442e13f0d8d8f88c93e3c819a5b56e',
-       i686: '51f58cc9434a8e3de6857803eec81cfb5d21fb45655f202b09e8c10167dd4367',
-     x86_64: '0d5be4983d24e0c543996208533922c70c95b75f4ac796c66ea0c01def96bf71',
+    aarch64: '9e350ad837fd7817904e367ca0e6369c8a449ce0333b9fd58b0d0230d42afbc3',
+     armv7l: '9e350ad837fd7817904e367ca0e6369c8a449ce0333b9fd58b0d0230d42afbc3',
+       i686: 'e2129fedb5909c8c1312a3f5e807a9898c0d1fb9395818595ab85ca8c052d58e',
+     x86_64: 'f75435a6d55c616243ed84ace3623a9b7ec22e118f593b2826e1fee69271d46f',
   })
 
+  depends_on 'aspell_en'
+  depends_on 'libedit'
   depends_on 'libgcrypt'
-  depends_on 'libwebp'
+  depends_on 'libjpeg_turbo'
+  depends_on 'libsodium'
   depends_on 'libxslt'
   depends_on 'libzip'
   depends_on 'curl'
   depends_on 'exif'
+  depends_on 'freetds'
   depends_on 'freetype'
   depends_on 'pcre'
   depends_on 're2c'
@@ -70,38 +74,49 @@ class Php74 < Package
            "--sbindir=#{CREW_PREFIX}/bin",
            "--with-config-file-path=#{CREW_PREFIX}/etc",
            "--with-libdir=#{ARCH_LIB}",
-           "--with-freetype-dir=#{CREW_PREFIX}/include/freetype2/freetype",
-           "--with-pcre-regex=#{CREW_LIB_PREFIX}",
-           "--with-jpeg-dir=#{CREW_LIB_PREFIX}",
            "--with-kerberos=#{CREW_LIB_PREFIX}",
-           "--with-png-dir=#{CREW_LIB_PREFIX}",
-           "--with-webp-dir=#{CREW_LIB_PREFIX}",
-           "--with-xpm-dir=#{CREW_LIB_PREFIX}",
+           '--enable-bcmath',
+           '--enable-calendar',
+           '--enable-dba=shared',
            '--enable-exif',
            '--enable-fpm',
            '--enable-ftp',
+           '--enable-gd',
+           '--enable-intl',
            '--enable-mbstring',
+           '--enable-mysqlnd',
            '--enable-opcache',
            '--enable-pcntl',
            '--enable-shared',
            '--enable-shmop',
+           '--enable-soap',
            '--enable-sockets',
-           '--enable-zip',
+           '--enable-sysvmsg',
            '--with-bz2',
            '--with-curl',
-           '--with-gd',
+           '--with-ffi',
+           '--with-freetype',
+           '--with-gdbm',
            '--with-gettext',
            '--with-gmp',
-           '--with-libzip',
+           '--with-jpeg',
+           '--with-kerberos',
+           '--with-ldap',
+           '--with-ldap-sasl',
+           '--with-libedit',
            '--with-mysqli',
            '--with-openssl',
-           '--with-pcre-regex',
+           '--with-pdo-dblib',
            '--with-pdo-mysql',
            '--with-pear',
+           '--with-pspell',
            '--with-readline',
+           '--with-sodium',
            '--with-tidy',
            '--with-unixODBC',
+           '--with-xmlrpc',
            '--with-xsl',
+           '--with-zip',
            '--with-zlib'
     system 'make'
   end
