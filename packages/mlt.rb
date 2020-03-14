@@ -15,9 +15,9 @@ class Mlt < Package
   depends_on 'qtbase' => :build
   depends_on 'libexif'
   depends_on 'ffmpeg'
-  depends_on 'gtk3'
   depends_on 'qtsvg'
   depends_on 'rtaudio'
+  depends_on 'rubberband'
 
   def self.build
     Dir.mkdir 'build'
