@@ -13,6 +13,7 @@ class Mlt < Package
   })
 
   depends_on 'qtbase' => :build
+  depends_on 'libebur128'
   depends_on 'libexif'
   depends_on 'ffmpeg'
   depends_on 'qtsvg'
