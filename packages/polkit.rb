@@ -14,7 +14,7 @@ class Polkit < Package
 
   depends_on 'elogind'
   depends_on 'gtk_doc'
-  depends_on 'mozjs'
+  depends_on 'mozjs60'
 
   def self.patch
     # Fix /usr/bin/perl: bad interpreter: No such file or directory
@@ -23,12 +23,15 @@ class Polkit < Package
 
   def self.build
     system './autogen.sh'
+    # Fix /usr/bin/file: No such file or directory
+    system 'filefix'
     system './configure',
            "--prefix=#{CREW_PREFIX}",
-           "--libdir=#{CREW_LIB_PREFIX}",
            '--disable-maintenance-mode',
+           '--with-os-type=chromeos',
            '--disable-gtk-doc-html',
-           '--disable-man-pages'
+           '--disable-man-pages',
+           '--enable-examples'
     system 'make'
   end
 

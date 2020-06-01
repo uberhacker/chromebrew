@@ -3,16 +3,15 @@ require 'package'
 class Elogind < Package
   description "The systemd project's 'logind', extracted to a standalone package"
   homepage 'https://github.com/elogind/elogind'
-  version '241.4'
-  source_url 'https://github.com/elogind/elogind/archive/v241.4.tar.gz'
-  source_sha256 'fb4d0f931d5fb11af5a4426b0198e85fabc83d604ee24427b26480164cddb7e1'
+  version '243.7'
+  source_url 'https://github.com/elogind/elogind/archive/v243.7.tar.gz'
+  source_sha256 '941fde1ffbdf51d61e47fcebc49e2fc2b1347fcf3b0522bfa9d65ad5da653e53'
 
   binary_url ({
   })
   binary_sha256 ({
   })
 
-  depends_on 'meson' => :build
   depends_on 'dbus'
   depends_on 'glib'
   depends_on 'gperf'
