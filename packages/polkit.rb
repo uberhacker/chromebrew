@@ -13,7 +13,6 @@ class Polkit < Package
   })
 
   depends_on 'elogind'
-  depends_on 'gtk_doc'
   depends_on 'mozjs60'
 
   def self.patch
@@ -37,16 +36,17 @@ class Polkit < Package
 
   def self.install
     system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
+    if ARCH == 'x86_64'
+      FileUtils.mkdir_p CREW_DEST_LIB_PREFIX
+      FileUtils.mv Dir.glob("#{CREW_DEST_PREFIX}/lib/*"), CREW_DEST_LIB_PREFIX
+    end
   end
 
   def self.postinstall
     system "chmod 700 #{CREW_PREFIX}/etc/polkit-1/rules.d"
+    system "chmod 4755 #{CREW_PREFIX}/bin/pkexec"
+    system "chmod 4755 #{CREW_LIB_PREFIX}/polkit-1/polkit-agent-helper-1"
     system "sudo chown root:root #{CREW_PREFIX}/bin/pkexec"
-    system "sudo chown root:root #{CREW_PREFIX}/lib/polkit-1/polkit-agent-helper-1"
-    puts
-    puts "To complete the installation, execute the following:".lightblue
-    puts "sudo chmod 4755 #{CREW_PREFIX}/bin/pkexec".lightblue
-    puts "sudo chmod 4755 #{CREW_PREFIX}/lib/polkit-1/polkit-agent-helper-1".lightblue
-    puts
+    system "sudo chown root:root #{CREW_LIB_PREFIX}/polkit-1/polkit-agent-helper-1"
   end
 end
