@@ -3,28 +3,58 @@ require 'package'
 class Julia < Package
   description 'Julia is a flexible dynamic language, appropriate for scientific and numerical computing'
   homepage 'https://julialang.org/'
-  version '1.3.1'
+  version '1.4.2'
   compatibility 'all'
-  case ARCH
-  when 'aarch64', 'armv7l'
-   source_url 'https://julialang-s3.julialang.org/bin/linux/armv7l/1.3/julia-1.3.1-linux-armv7l.tar.gz'
-   source_sha256 '965c8fab2214f8ce1b3d449d088561a6de61be42543b48c3bbadaed5b02bf824'
-  when 'i686'
-    source_url 'https://julialang-s3.julialang.org/bin/linux/x86/1.3/julia-1.3.1-linux-i686.tar.gz'
-    source_sha256 '2cef14e892ac317707b39d2afd9ad57a39fb77445ffb7c461a341a4cdf34141a'
-  when 'x86_64'
-    source_url 'https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3.1-linux-x86_64.tar.gz'
-    source_sha256 'faa707c8343780a6fe5eaf13490355e8190acf8e2c189b9e7ecbddb0fa2643ad'
+  source_url 'https://github.com/JuliaLang/julia/releases/download/v1.4.2/julia-1.4.2.tar.gz'
+  source_sha256 '76a94e06e68fb99822e0876a37c2ed3873e9061e895ab826fd8c9fc7e2f52795'
+
+  binary_url ({
+    armv7l: 'file:///home/chronos/user/Downloads/julia-1.4.2-chromeos-armv7l.tar.xz'
+  })
+  binary_sha256 ({
+    armv7l: '01b5954145fc5ea53a1d5f0af0e8f737df1c00b3c67e175c0b89da509dd78ab3'
+  })
+
+  depends_on 'curl'
+  depends_on 'llvm'
+  depends_on 'libgit2'
+  depends_on 'libmbedtls'
+  depends_on 'libunwind'
+  depends_on 'libuv'
+  depends_on 'openblas'
+  depends_on 'openlibm'
+  depends_on 'pcre2'
+  depends_on 'suitesparse'
+
+  def self.build
+    system 'make', 'cleanall'
+    system 'make'
   end
 
+#  def self.check
+#    system 'make', 'cleanall'
+#    system 'make', 'test'
+#  end
+
   def self.install
-    FileUtils.mkdir_p "#{CREW_DEST_LIB_PREFIX}/julia"
-    system "cp -r . #{CREW_DEST_PREFIX}"
-    if ARCH == 'x86_64'
-      FileUtils.cd "#{CREW_DEST_PREFIX}/lib/julia" do
-        system "find . -type f -exec ln -s #{CREW_PREFIX}/lib/julia/{} #{CREW_DEST_LIB_PREFIX}/julia/{} \\;"
-        system "find . -type l -exec ln -s #{CREW_PREFIX}/lib/julia/{} #{CREW_DEST_LIB_PREFIX}/julia/{} \\;"
-      end
-    end
+    FileUtils.mkdir_p CREW_DEST_LIB_PREFIX
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/bin"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/include"
+    FileUtils.mkdir_p "#{CREW_DEST_MAN_PREFIX}/man1"
+    FileUtils.mv 'usr/etc', CREW_DEST_PREFIX
+    FileUtils.mv 'usr/lib/julia', CREW_DEST_LIB_PREFIX
+    FileUtils.mv 'usr/bin/julia', "#{CREW_DEST_PREFIX}/bin"
+    FileUtils.mv 'usr/share/julia', "#{CREW_DEST_PREFIX}/share"
+    FileUtils.mv 'usr/include/julia', "#{CREW_DEST_PREFIX}/include"
+    FileUtils.mv 'usr/lib/libdSFMT.so', CREW_DEST_LIB_PREFIX
+    FileUtils.mv 'usr/lib/libccalltest.so', CREW_DEST_LIB_PREFIX
+    FileUtils.mv 'usr/lib/libgfortran.so.5', CREW_DEST_LIB_PREFIX
+    FileUtils.mv 'usr/lib/libllvmcalltest.so', CREW_DEST_LIB_PREFIX
+    FileUtils.mv 'usr/lib/libsuitesparse_wrapper.so', CREW_DEST_LIB_PREFIX
+    FileUtils.mv Dir.glob('usr/lib/libLLVM*.so'), CREW_DEST_LIB_PREFIX
+    FileUtils.mv Dir.glob('usr/lib/libjulia.so*'), CREW_DEST_LIB_PREFIX
+    FileUtils.mv Dir.glob('usr/lib/libOptRemarks.so*'), CREW_DEST_LIB_PREFIX
+    FileUtils.mv 'usr/share/man/man1/julia.1', "#{CREW_DEST_MAN_PREFIX}/man1"
   end
 end
