@@ -22,6 +22,7 @@ class Webkitgtk < Package
   depends_on 'libseccomp'
   depends_on 'libsecret'
   depends_on 'woff2'
+  depends_on 'wpebackend_fdo'
   depends_on 'xdg_dbus_proxy'
 
   def self.build
