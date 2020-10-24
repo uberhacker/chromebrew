@@ -8,11 +8,11 @@ class Pixman < Package
   source_url 'https://www.cairographics.org/releases/pixman-0.40.0.tar.gz'
   source_sha256 '6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc'
 
-  depends_on 'llvm' => ':build'
+  depends_on 'llvm' => :build
 
   def self.build
-    ENV['CFLAGS'] = "-fuse-ld=lld"
-    ENV['CXXFLAGS'] = "-fuse-ld=lld"
+    ENV['CFLAGS'] = '-fuse-ld=lld'
+    ENV['CXXFLAGS'] = '-fuse-ld=lld'
     system "./configure #{CREW_OPTIONS}"
     system 'make'
   end

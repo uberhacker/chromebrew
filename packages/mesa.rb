@@ -27,15 +27,15 @@ class Mesa < Package
   depends_on 'zstd'
 
   def self.build
-    system "pip3 uninstall -y Mako MarkupSafe || :"
+    system 'pip3 uninstall -y Mako MarkupSafe || :'
     system "pip3 install --prefix \"#{CREW_PREFIX}\" --root \"#{CREW_DEST_DIR}\" Mako"
     system "pip3 install --prefix \"#{CREW_PREFIX}\" Mako"
     
-    ENV['CFLAGS'] = "-fuse-ld=lld"
-    ENV['CXXFLAGS'] = "-fuse-ld=lld"
+    ENV['CFLAGS'] = '-fuse-ld=lld'
+    ENV['CXXFLAGS'] = '-fuse-ld=lld'
 
     # Just use mostly defaults.
-    system "meson",
+    system 'meson',
       "-Dprefix=#{CREW_PREFIX}",
       "-Dlibdir=#{CREW_LIB_PREFIX}",
       "-DLIB_INSTALL_DIR=#{CREW_LIB_PREFIX}",
@@ -43,12 +43,11 @@ class Mesa < Package
       "-DSYSCONFDIR=#{CREW_PREFIX}/etc",
       "-Ddatadir=#{CREW_LIB_PREFIX}",
       '-Dbuildtype=release',
-      "builddir"
-    system "ninja -C builddir"
+      'builddir'
+    system 'ninja -C builddir'
   end
 
   def self.install
     system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-
   end
 end

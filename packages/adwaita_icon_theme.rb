@@ -16,23 +16,25 @@ class Adwaita_icon_theme < Package
   depends_on 'xdg_base'
   
   def self.build
-    ENV['CFLAGS'] = "-fuse-ld=lld"
-    ENV['CXXFLAGS'] = "-fuse-ld=lld"
+    ENV['CFLAGS'] = '-fuse-ld=lld'
+    ENV['CXXFLAGS'] = '-fuse-ld=lld'
     ENV['GDK_PIXBUF_MODULEDIR'] = "#{CREW_LIB_PREFIX}/gdk-pixbuf-2.0/2.10.0/loaders"
     ENV['GDK_PIXBUF_MODULE_FILE'] = "#{CREW_LIB_PREFIX}/gdk-pixbuf-2.0/2.10.0/loaders.cache"
     ENV['LIBRARY_PATH'] = "#{CREW_LIB_PREFIX}:/usr/#{ARCH_LIB}:/#{ARCH_LIB}"
     # Need to make sure svg support is properly loaded otherwise build fails.
     system "gdk-pixbuf-query-loaders > #{CREW_LIB_PREFIX}/gdk-pixbuf-2.0/2.10.0/loaders.cache"
-    system "./configure #{CREW_OPTIONS} "
+    system "./configure #{CREW_OPTIONS}"
     system 'make'
   end
+
   def self.install
     system "make install DESTDIR=#{CREW_DEST_DIR}"
   end
   
-    def self.postinstall
+  def self.postinstall
     puts "To add basic settings, execute the following:".lightblue
-    puts "Note that this will overwrite any existing ~/.config/gtk-3.0/settings.ini file!".lightred
+    puts
+    puts "Note this will overwrite any existing ~/.config/gtk-3.0/settings.ini file!".lightred
     puts
     puts "mkdir #{HOME}/.config/gtk-3.0".lightblue
     puts "cat << 'EOF' > #{HOME}/.config/gtk-3.0/settings.ini

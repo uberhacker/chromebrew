@@ -8,16 +8,16 @@ class Libxext < Package
   source_url 'https://www.x.org/releases/individual/lib/libXext-1.3.4.tar.gz'
   source_sha256 '8ef0789f282826661ff40a8eef22430378516ac580167da35cc948be9041aac1'
 
-  depends_on 'llvm' => ':build'
+  depends_on 'llvm' => :build
   
   def self.build
-    ENV['CFLAGS'] = "-fuse-ld=lld"
-    ENV['CXXFLAGS'] = "-fuse-ld=lld"
+    ENV['CFLAGS'] = '-fuse-ld=lld'
+    ENV['CXXFLAGS'] = '-fuse-ld=lld'
     system "./configure #{CREW_OPTIONS}"
-    system "make"
+    system 'make'
   end
 
   def self.install
-    system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
   end
 end

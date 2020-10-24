@@ -36,9 +36,10 @@ class Librsvg < Package
       "--disable-static",
       "--enable-pixbuf-loader",
       "--disable-tools"
-      system 'make'
+    system 'make'
   end
+
   def self.install
-      system "make install DESTDIR=#{CREW_DEST_DIR}"
+    system "make install DESTDIR=#{CREW_DEST_DIR}"
   end
 end

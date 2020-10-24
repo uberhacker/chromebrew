@@ -8,8 +8,6 @@ class Pango < Package
   source_url 'https://ftp.gnome.org/pub/gnome/sources/pango/1.47/pango-1.47.0.tar.xz'
   source_sha256 '730db8652fc43188e03218c3374db9d152351f51fc7011b9acae6d0a6c92c367'
 
-
-
   depends_on 'harfbuzz'
   depends_on 'cairo'
   depends_on 'glib'
@@ -17,12 +15,12 @@ class Pango < Package
   depends_on 'libxrender'
   depends_on 'fribidi' # Gets built inside install automatically.
   depends_on 'six'
-  depends_on 'llvm' => ':build'
+  depends_on 'llvm' => :build
 
   def self.build
-    ENV['CFLAGS'] = "-fuse-ld=lld"
-    ENV['CXXFLAGS'] = "-fuse-ld=lld"
-    system "meson",
+    ENV['CFLAGS'] = '-fuse-ld=lld'
+    ENV['CXXFLAGS'] = '-fuse-ld=lld'
+    system 'meson',
       "-Dprefix=#{CREW_PREFIX}",
       "-Dlibdir=#{CREW_LIB_PREFIX}",
       "-DLIB_INSTALL_DIR=#{CREW_LIB_PREFIX}",
@@ -30,9 +28,9 @@ class Pango < Package
       "-DSYSCONFDIR=#{CREW_PREFIX}/etc",
       "-Ddatadir=#{CREW_LIB_PREFIX}",
       '-Dbuildtype=release',
-      "-Dinstall-tests=false",
-      "builddir"
-    system "ninja -C builddir"
+      '-Dinstall-tests=false',
+      'builddir'
+    system 'ninja -C builddir'
   end
 
   def self.install

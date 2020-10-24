@@ -17,30 +17,31 @@ class I3 < Package
   depends_on 'yajl'
   depends_on 'wayland' => :build
   depends_on 'sommelier'
-  
+
   def self.build
     system "./configure #{CREW_OPTIONS} --disable-builddir --disable-maintainer-mode --enable-mans"
-    system "make -j#{CREW_NPROC}"
+    system 'make'
   end
 
   def self.install
     system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
     Dir.chdir "#{CREW_DEST_PREFIX}/bin" do
       system "for f in \$(ls #{CREW_BUILD}-*); do g=\$(echo \$f | sed 's,#{CREW_BUILD}-,,'); ln -sf \$f \$g; done"
-     system "echo '#!/bin/sh' > starti3"
-     system "echo 'stopsommelier' >> starti3"
-     system "echo 'export DISPLAY=100.115.92.2:0' >> starti3"
-     system "echo 'i3 \"$@\"' >> starti3"
-     system "echo 'export DISPLAY=:0' >> starti3"
-     system "echo 'startsommelier' >> starti3"
-     system "chmod +x starti3"
+      system "echo '#!/bin/sh' > starti3"
+      system "echo 'stopsommelier' >> starti3"
+      system "echo 'export DISPLAY=100.115.92.2:0' >> starti3"
+      system "echo 'i3 \"$@\"' >> starti3"
+      system "echo 'export DISPLAY=:0' >> starti3"
+      system "echo 'startsommelier' >> starti3"
+      system "chmod +x starti3"
     end
   end
-  
+
   def self.postinstall
-      puts
-      puts "To use this package, you need to download XServer XSDL from Google Play Store".lightblue
-      puts "Use 'starti3' instead of 'i3' to execute this package".lightblue
-      puts "Open XServer XSDL before running 'starti3'"
+    puts
+    puts "To use this package, you need to download XServer XSDL from Google Play Store.".lightblue
+    puts "Use 'starti3' instead of 'i3' to execute this package.".lightblue
+    puts "Open XServer XSDL before running 'starti3'."
+    puts
   end
 end
