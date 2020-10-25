@@ -32,15 +32,14 @@ class Mesa < Package
     system "pip3 install --prefix \"#{CREW_PREFIX}\" Mako"
     
     ENV['CFLAGS'] = '-fuse-ld=lld'
-    ENV['CXXFLAGS'] = '-fuse-ld=lld'
+    ENV['CXXFLAGS'] = "-fuse-ld=lld -I#{CREW_PREFIX}/include/c++/10.2.0"
 
     # Just use mostly defaults.
     system 'meson',
       "-Dprefix=#{CREW_PREFIX}",
       "-Dlibdir=#{CREW_LIB_PREFIX}",
-      "-DLIB_INSTALL_DIR=#{CREW_LIB_PREFIX}",
       "-Dmandir=#{CREW_MAN_PREFIX}",
-      "-DSYSCONFDIR=#{CREW_PREFIX}/etc",
+      "-Dsysconfdir=#{CREW_PREFIX}/etc",
       "-Ddatadir=#{CREW_LIB_PREFIX}",
       '-Dbuildtype=release',
       'builddir'

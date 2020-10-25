@@ -22,11 +22,10 @@ class Gobject_introspection < Package
   })
 
   depends_on 'glib'
-  depends_on 'cairo'
 
   def self.build
-    system "meson --prefix=#{CREW_PREFIX} --libdir=#{CREW_LIB_PREFIX} builddir"
-    system "ninja -C builddir"
+    system "meson #{CREW_MESON_OPTIONS} builddir"
+    system 'ninja -C builddir'
   end
 
   def self.install

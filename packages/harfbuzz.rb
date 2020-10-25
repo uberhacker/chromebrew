@@ -8,10 +8,9 @@ class Harfbuzz < Package
   source_url 'https://github.com/harfbuzz/harfbuzz/releases/download/2.7.2/harfbuzz-2.7.2.tar.xz'
   source_sha256 'b8c048d7c2964a12f2c80deb6634dfc836b603dd12bf0d0a3df1627698e220ce'
 
-
 #  depends_on 'cairo' => :build
   depends_on 'glib' => :build
-#  depends_on 'gobject_introspection' => :build
+  depends_on 'gobject_introspection' => :build
   depends_on 'ragel' => :build
   depends_on 'freetype_sub'
   depends_on 'six' => :build
@@ -28,9 +27,8 @@ class Harfbuzz < Package
       '-Ddocs=disabled',
       "-Dprefix=#{CREW_PREFIX}",
       "-Dlibdir=#{CREW_LIB_PREFIX}",
-      "-DLIB_INSTALL_DIR=#{CREW_LIB_PREFIX}",
       "-Dmandir=#{CREW_MAN_PREFIX}",
-      "-DSYSCONFDIR=#{CREW_PREFIX}/etc",
+      "-Dsysconfdir=#{CREW_PREFIX}/etc",
       "-Ddatadir=#{CREW_LIB_PREFIX}",
       '-Dbuildtype=release',
       'builddir'
@@ -39,5 +37,7 @@ class Harfbuzz < Package
 
   def self.install
     system "DESTDIR=#{CREW_DEST_DIR} meson install -C builddir"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/gir-1.0"
+    FileUtils.ln_s "#{CREW_LIB_PREFIX}/gir-1.0/HarfBuzz-0.0.gir", "#{CREW_DEST_PREFIX}/share/gir-1.0/HarfBuzz-0.0.gir"
   end
 end

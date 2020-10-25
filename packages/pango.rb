@@ -12,6 +12,7 @@ class Pango < Package
   depends_on 'cairo'
   depends_on 'glib'
   depends_on 'gobject_introspection'   # add this package to build gtk+, avoid compilation error
+  depends_on 'help2man' => :build
   depends_on 'libxrender'
   depends_on 'fribidi' # Gets built inside install automatically.
   depends_on 'six'
@@ -23,9 +24,8 @@ class Pango < Package
     system 'meson',
       "-Dprefix=#{CREW_PREFIX}",
       "-Dlibdir=#{CREW_LIB_PREFIX}",
-      "-DLIB_INSTALL_DIR=#{CREW_LIB_PREFIX}",
       "-Dmandir=#{CREW_MAN_PREFIX}",
-      "-DSYSCONFDIR=#{CREW_PREFIX}/etc",
+      "-Dsysconfdir=#{CREW_PREFIX}/etc",
       "-Ddatadir=#{CREW_LIB_PREFIX}",
       '-Dbuildtype=release',
       '-Dinstall-tests=false',
@@ -35,5 +35,9 @@ class Pango < Package
 
   def self.install
     system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/gir-1.0"
+    Dir.chdir "#{CREW_DEST_LIB_PREFIX}/gir-1.0" do
+      system "find -name '*.gir' -exec ln -s #{CREW_LIB_PREFIX}/gir-1.0/{} #{CREW_DEST_PREFIX}/share/gir-1.0/{} \\;"
+    end
   end
 end

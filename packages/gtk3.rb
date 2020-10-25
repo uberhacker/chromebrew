@@ -19,12 +19,12 @@ class Gtk3 < Package
   depends_on 'iso_codes'
   depends_on 'json_glib'
   depends_on 'libepoxy'
+  depends_on 'libwebp'
   depends_on 'libxkbcommon'
   depends_on 'llvm' => :build
   depends_on 'shared_mime_info'
   depends_on 'six' => :build
   depends_on 'xdg_base'
-
 
   def self.build
     # The lld linker allows linking against system ChromeOS libs.
@@ -38,9 +38,8 @@ class Gtk3 < Package
          '-Dexamples=false',
          "-Dprefix=#{CREW_PREFIX}",
          "-Dlibdir=#{CREW_LIB_PREFIX}",
-         "-DLIB_INSTALL_DIR=#{CREW_LIB_PREFIX}",
          "-Dmandir=#{CREW_MAN_PREFIX}",
-         "-DSYSCONFDIR=#{CREW_PREFIX}/etc",
+         "-Dsysconfdir=#{CREW_PREFIX}/etc",
          "-Ddatadir=#{CREW_LIB_PREFIX}",
          '-Dbuildtype=release',
          'build'
