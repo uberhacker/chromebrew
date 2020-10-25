@@ -18,6 +18,14 @@ class Pango < Package
   depends_on 'six'
   depends_on 'llvm' => :build
 
+  def self.patch
+    # Fix pango/pango-ot-private.h:30:10: fatal error: hb-ft.h: No such file or directory
+    system "sed -i 's,hb-ft.h,hb.h,' pango/pangofc-fontmap.c"
+    system "sed -i 's,hb-ft.h,hb.h,' pango/pango-ot-private.h"
+    # Fix ld.lld: error: undefined symbol: hb_ft_face_create
+    system "sed -i 's,hb_ft_face_create,hb_face_create,' pango/pango-ot-info.c"
+  end
+
   def self.build
     ENV['CFLAGS'] = '-fuse-ld=lld'
     ENV['CXXFLAGS'] = '-fuse-ld=lld'
