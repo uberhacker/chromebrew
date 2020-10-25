@@ -13,6 +13,11 @@ class Freetype < Package
   depends_on 'bz2'
   depends_on 'harfbuzz'
 
+  def self.patch
+    # Fix src/autofit/afshaper.h:30:10: fatal error: hb-ft.h: No such file or directory
+    system "sed -i 's,hb-ft.h,hb.h,' src/autofit/afshaper.h"
+  end
+
   def self.build
     system 'pip3 install docwriter'
     system "sed -i 's,/usr/include/freetype2,#{CREW_PREFIX}/include/freetype2,g' configure"
