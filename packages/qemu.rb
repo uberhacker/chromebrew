@@ -3,16 +3,14 @@ require 'package'
 class Qemu < Package
   description 'QEMU is a generic and open source machine emulator and virtualizer.'
   homepage 'http://www.qemu.org/'
-  version '4.2.0'
+  version '5.0.1'
   compatibility 'all'
-  source_url 'https://download.qemu.org/qemu-4.2.0.tar.xz'
-  source_sha256 'd3481d4108ce211a053ef15be69af1bdd9dde1510fda80d92be0f6c3e98768f0'
+  source_url 'https://download.qemu.org/qemu-5.0.1.tar.xz'
+  source_sha256 '135fab4c3699a378c9584b3453927e2f5002e440311f21efa66fc189d4bb4982'
 
   binary_url ({
-
   })
   binary_sha256 ({
-
   })
 
   depends_on 'bz2'
@@ -38,6 +36,6 @@ class Qemu < Package
   end
 
   def self.install
-    system "make", "DESTDIR=#{CREW_DEST_DIR}", "install"
+    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
   end
 end
