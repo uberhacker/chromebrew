@@ -9,8 +9,6 @@ class Pwashortcut < Package
   
   depends_on "graphicsmagick"
 
-  HOME = Dir.home
-    
   def self.build
     system "pip install flask"
     #######################################
@@ -24,28 +22,22 @@ app = Flask(__name__)
 EOF"
     #######################################
     system "cat <<'EOF'> manifest.json.bak
-v1
-  \"name\"v4 \"linuxapp\"v6
-  \"short_name\"v4 \"linuxapp\"v6
-  \"display\"v4 \"standalone\"v6
-  \"start_url\"v4 \"unixapp.app\"v6
-  \"theme_color\"v4 \"#000000\"v6
-  \"background_color\"v4 \"#000000\"v6
-  \"icons\"v4 v2
-    v1
-      \"src\"v4 \"icon/brew.png\"v6
-      \"sizes\"v4 \"546x546\"v6
-      \"type\"v4 \"image/png\"
-    v9
-  v8
-v9
+{
+  \"name\": \"linuxapp\",
+  \"short_name\": \"linuxapp\",
+  \"display\": \"standalone\",
+  \"start_url\": \"unixapp.app\",
+  \"theme_color\": \"#000000\",
+  \"background_color\": \"#000000\",
+  \"icons\": [
+    {
+      \"src\": \"icon/brew.png\",
+      \"sizes\": \"546x546\",
+      \"type\": \"image/png\"
+    }
+  ]
+}
 EOF"
-    system "sed -i 's/v6/,/g' manifest.json.bak"
-    system "sed -i 's/v4/:/g' manifest.json.bak"
-    system "sed -i 's/v1/\{/g' manifest.json.bak"
-    system "sed -i 's/v2/\[/g' manifest.json.bak"
-    system "sed -i 's/v9/\}/g' manifest.json.bak"
-    system "sed -i 's/v8/]/g' manifest.json.bak"
     #######################################
     system "cat <<'EOF'> pwashortcut
 #!/bin/bash
@@ -53,39 +45,42 @@ EOF"
 export CREW_PREFIX=#{CREW_PREFIX}
 export PYTHONPATH=$CREW_PREFIX/lib/python3.9/site-packages/
 export PWA_PREFIX=$CREW_PREFIX/lib/pwa
-export tools=$PWA_PREFIX/tools
+export TOOLS=$PWA_PREFIX/tools
 export FLASK_APP=$PWA_PREFIX/main.py
 export FLASK_ENV=development
 pkill flask
 help='
 ===================================
     Shortcut Server Starter
-  -s (Default option) Start shortcut server
-  -n (App Name)       Make a new shortcut
-  -h                  Show this message
-  -p                  Set py script path
-  -y                  Set PYTHONPATH
+  -d                  Generate shortcuts from .desktop files (stable but not recommended)
   -f                  Pass option to Flask
   -g                  PWA icon chooser
+  -h                  Show this message
   -i                  Available preinstalled icons for PWA icon chooser
-  -d                  Generate shortcuts from .desktop files (stable but not recommended)
+  -n (App Name)       Make a new shortcut
+  -p                  Set py script path
+  -s (Default option) Start shortcut server
+  -y                  Set PYTHONPATH
 ==================================='
 case ${1} in
     -d)
-          bash $tools/find.sh $CREW_PREFIX
+          bash $TOOLS/find.sh $CREW_PREFIX
           ;;
     -h)
           echo \"$help\"
           ;;
     -i)
-          bash $tools/customize.sh -i $tools/icon/
+          bash $TOOLS/customize.sh -i $TOOLS/icon/
+          ;;
+    -f)  
+          flask run $OPTARG
           ;;
     -g)   
-          bash $tools/customize.sh $tools/icon/ $PWA_PREFIX
+          bash $TOOLS/customize.sh $TOOLS/icon/ $PWA_PREFIX
           ;;
     -n)
           mkdir -p $PWA_PREFIX/$2/templates
-          cp -r $tools/* $PWA_PREFIX/$2/templates
+          cp -r $TOOLS/* $PWA_PREFIX/$2/templates
           mv $PWA_PREFIX/$2/templates/manifest.json.bak $PWA_PREFIX/$2/templates/manifest.json
           sed -i \"s/linuxapp/${2^}/g\" $PWA_PREFIX/$2/templates/manifest.json
           sed -i \"s/unixapp/$2/g\" $PWA_PREFIX/$2/templates/manifest.json
@@ -111,44 +106,28 @@ case ${1} in
           if [[ $(pwashortcut -i | grep $2) != \"\" ]]
           then
           echo \"${2^} has a preinstalled customize theme, using preinstalled configuration\"
-          cp $tools/icon/$2.json $PWA_PREFIX/$2/templates/manifest.json
+          cp $TOOLS/icon/$2.json $PWA_PREFIX/$2/templates/manifest.json
           fi
           echo \"Wait for server start and go to localhost:5000/$2/ for installing shortcut.\"
           sleep 2
           flask run
           ;;
+    -p)
+          export FLASK_APP=$OPTARG
+          flask run
+          ;;
     -s)
           flask run
           ;;
-    *)
-          getopts \"p:y:f:*\" arg
-          OPTARG=$(echo ${OPTARG} | sed 's/\=//')
-          RUN=NO
-          case ${arg} in
-                 p)
-                     RUN=YES
-                     export FLASK_APP=$OPTARG
-                     flask run
-                     ;;
-                 y)
-                     RUN=YES
-                     export PYTHONPATH=$OPTARG
-                     flask run
-                     ;;
-                 f)  
-                     RUN=YES
-                     flask run $OPTARG
-                     ;;
-                 *)  
-                     echo \"Error: unknown option '$arg'\"
-                     echo \"Try 'pwashortcut -h' for more options.\"
-                     ;;
-          esac
-          if [[ $RUN != YES ]]; then echo \"$help\"; fi
+    -y)
+          export PYTHONPATH=$OPTARG
+          flask run
+          ;;
+    *)  
+          echo \"$help\"
           ;;
 esac
 EOF"
-    #########################################
   end
 
   def self.install
@@ -159,26 +138,27 @@ EOF"
     Dir.chdir("icon") do
       FileUtils.mv "brew_transparent_546x546.png", "brew.png"
     end
-    FileUtils.mv "extension/", "#{HOME}/Downloads/extension/"
+    FileUtils.mv "extension/", "#{CREW_DEST_HOME}/Downloads/"
     FileUtils.mv Dir.glob('*'), "#{CREW_DEST_PREFIX}/lib/pwa/tools/"
   end
+
   def self.postinstall
-      puts 
-      puts "To complete the installation, execute the following:".lightblue
-      puts "echo 'nohup pwashortcut -s &' >> ~/.bashrc".lightblue
-      puts 
-      puts "To complete the installation, install the exit extension by following:".lightgreen
-      puts "Go to chrome://extensions/".lightgreen
-      puts "Switch on Developer Mode".lightgreen
-      puts "Click 'Load Unpacked'".lightgreen
-      puts "Select the 'unpacked' folder under 'extension' in 'Downloads'".lightgreen
-      puts "Copy the ID of the extension".lightgreen
-      puts "Execute the following:".lightgreen
-      puts "id=*REPLACE-WITH-YOUR-COPIED-ID*".lightgreen
-      puts "sed -i \"s/eabaombiainalffcbinoffnbjeaefhle/$id/g\" #{CREW_PREFIX}/bin/pwashortcut".lightgreen
-      puts "sed -i \"s/eabaombiainalffcbinoffnbjeaefhle/$id/g\" #{CREW_PREFIX}/lib/pwa/tools/*.sh".lightgreen
-      puts
-      puts "Run 'pwashortcut -h' for more usage of this package".lightblue
-      puts 
+    puts 
+    puts "To complete the installation, execute the following:".lightblue
+    puts "echo 'nohup pwashortcut -s &' >> ~/.bashrc".lightblue
+    puts 
+    puts "To complete the installation, install the exit extension by following:".lightgreen
+    puts "Go to chrome://extensions/".lightgreen
+    puts "Switch on Developer Mode".lightgreen
+    puts "Click 'Load Unpacked'".lightgreen
+    puts "Select the 'unpacked' folder under 'extension' in 'Downloads'".lightgreen
+    puts "Copy the ID of the extension".lightgreen
+    puts "Execute the following:".lightgreen
+    puts "id=*REPLACE-WITH-YOUR-COPIED-ID*".lightgreen
+    puts "sed -i \"s/eabaombiainalffcbinoffnbjeaefhle/$id/g\" #{CREW_PREFIX}/bin/pwashortcut".lightgreen
+    puts "sed -i \"s/eabaombiainalffcbinoffnbjeaefhle/$id/g\" #{CREW_PREFIX}/lib/pwa/tools/*.sh".lightgreen
+    puts
+    puts "Run 'pwashortcut -h' for more usage of this package".lightblue
+    puts 
   end
 end
