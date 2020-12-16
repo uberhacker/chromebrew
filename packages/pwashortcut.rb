@@ -138,7 +138,7 @@ EOF"
     Dir.chdir("icon") do
       FileUtils.mv "brew_transparent_546x546.png", "brew.png"
     end
-    FileUtils.mv "extension/", "#{CREW_DEST_HOME}/Downloads/"
+    FileUtils.mv "extension/", "#{HOME}/Downloads/"
     FileUtils.mv Dir.glob('*'), "#{CREW_DEST_PREFIX}/lib/pwa/tools/"
   end
 
