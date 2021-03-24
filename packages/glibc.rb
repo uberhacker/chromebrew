@@ -34,6 +34,13 @@ class Glibc < Package
        armv7l: '64b4b73e2096998fd1a0a0e7d18472ef977aebb2f1cad83d99c77e164cb6a1d6',
        x86_64: '5fe94642dbbf900d22b715021c73ac1a601b81517f0da1e7413f0af8fbea7997',
     })
+  when '2.28'
+    source_url 'https://ftpmirror.gnu.org/glibc/glibc-2.28.tar.xz'
+    source_sha256 'b1900051afad76f7a4f73e71413df4826dce085ef8ddb785a945b66d7d513082'
+    binary_url ({
+    })
+    binary_sha256 ({
+    })
   end
 
   depends_on 'gawk' => :build
