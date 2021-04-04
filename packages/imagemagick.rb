@@ -3,19 +3,19 @@ require 'package'
 class Imagemagick < Package
   description 'Use ImageMagick to create, edit, compose, or convert bitmap images.'
   homepage 'http://www.imagemagick.org/script/index.php'
-  version '6.9.11-29-7.0.11-2'
+  version '6.9.12-6-7.0.11-6'
   license 'imagemagick'
   compatibility 'all'
 
   is_fake
 
-  if ARGV[0] == 'install'
+  def self.preflight
     imver = `stream -version 2> /dev/null | head -1 | cut -d' ' -f3`.chomp
-    abort "ImageMagick version #{imver} already installed.".lightgreen unless "#{imver}" == ""
+    abort "ImageMagick version #{imver} already installed.".lightgreen unless imver.empty?
     puts
     puts "  Select the version to install:"
-    puts "  6 = ImageMagick 6.9.11-29"
-    puts "  7 = ImageMagick 7.0.11-2"
+    puts "  6 = ImageMagick 6.9.12-6"
+    puts "  7 = ImageMagick 7.0.11-6"
     puts "  0 = Cancel"
 
     while version = STDIN.gets.chomp
