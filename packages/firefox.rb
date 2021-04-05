@@ -3,7 +3,7 @@ require 'package'
 class Firefox < Package
   description 'Mozilla Firefox (or simply Firefox) is a free and open-source web browser'
   homepage 'https://www.mozilla.org/en-US/firefox/'
-  
+
   # follow debian patch
   version '87.0-2'
   license 'MPL-2.0, GPL-2 and LGPL-2.1'
@@ -20,7 +20,7 @@ class Firefox < Package
     @_arch = 'armhf'
     source_sha256 'bd4c13a8cf824c9c9c4f5dbb7ab3d0c1dda3bb5ddc99c53632509f835814e4c1'
   end
-  
+
   source_url "http://ftp.us.debian.org/debian/pool/main/f/firefox/firefox_#{version}_#{@_arch}.deb"
 
   depends_on 'atk'
@@ -47,17 +47,17 @@ class Firefox < Package
   depends_on 'pulseaudio'
   depends_on 'sommelier'
 
-  def self.patch   
-    @_wrapper = <<~EOF
+  def self.patch
+    #@_wrapper = <<~EOF
       #!/bin/sh
       # To get sound working, used : https://codelab.wordpress.com/2017/12/11/firefox-drops-alsa-apulse-to-the-rescue/
-      
-      exec apulse #{CREW_PREFIX}/lib/firefox/firefox "$@"
-    EOF
-    
-    FileUtils.rm('./usr/bin/firefox')
-    File.write('./usr/bin/firefox', @_wrapper)
-    File.chmod(0755, './usr/bin/firefox')
+
+    #  exec apulse #{CREW_PREFIX}/lib/firefox/firefox "$@"
+    #EOF
+
+    #FileUtils.rm('./usr/bin/firefox')
+    #File.write('./usr/bin/firefox', @_wrapper)
+    #File.chmod(0755, './usr/bin/firefox')
   end
 
   def self.install
