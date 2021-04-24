@@ -8,6 +8,7 @@ class Pkgsrc < Package
   compatibility 'all'
   source_url 'https://github.com/NetBSD/pkgsrc.git'
   git_branch "pkgsrc-#{version}"
+  git_hashtag '15a205d58e1dae6b446a8f8a997b77ae70ea26de'
 
   def self.build
     @pkglocate = <<~EOF
