@@ -6,8 +6,8 @@ class Pkgsrc < Package
   version '2021Q1'
   license '' # Can't find license
   compatibility 'all'
-  source_url 'https://github.com/NetBSD/pkgsrc/archive/ccaf3cb68a965f1b055b3e04485d725fc7043813.tar.gz'
-  source_sha256 '16039f24bb84d5046832e462cfd7a21c5f53dd15792a9e6b71fa4faec3a7ab4e'
+  source_url 'https://github.com/NetBSD/pkgsrc.git'
+  git_branch "pkgsrc-#{version}"
 
   def self.build
     @pkglocate = <<~EOF
@@ -27,28 +27,27 @@ class Pkgsrc < Package
     when 'x86_64'
       abi = '64'
     end
-    ENV['SH'] = '/bin/bash'
-    ENV['OS_VARIANT'] = 'chromeos'
     FileUtils.chdir 'bootstrap' do
-      system "./bootstrap --abi=#{abi} --preserve-path --unprivileged --prefix=#{CREW_PREFIX}/pkg \
---pkgdbdir=#{CREW_PREFIX}/pkg/pkgdb --sysconfdir=#{CREW_PREFIX}/pkg/etc --varbase=#{CREW_PREFIX}/pkg/var \
+      system "SH=/bin/bash OS_VARIANT='chromeos' ./bootstrap --abi=#{abi} --preserve-path \
+--unprivileged --prefix=#{CREW_PREFIX}/pkg --pkgdbdir=#{CREW_PREFIX}/pkg/pkgdb \
+--sysconfdir=#{CREW_PREFIX}/pkg/etc --varbase=#{CREW_PREFIX}/pkg/var \
 --workdir=#{CREW_DEST_PREFIX} --cwrappers=no --prefer-pkgsrc=yes --make-jobs=#{CREW_NPROC}"
     end
     FileUtils.mv "#{CREW_PREFIX}/pkg", "#{CREW_DEST_PREFIX}"
     FileUtils.chdir "#{CREW_DEST_PREFIX}/bin" do
       system 'rm -f bmake nawk sed'
     end
-    FileUtils.chdir "#{CREW_DEST_PREFIX}/sbin" do
-      system 'rm -f *'
-    end
+    FileUtils.rm_rf "#{CREW_DEST_PREFIX}/sbin"
     FileUtils.chdir "#{CREW_DEST_PREFIX}" do
       system "curl -#LO ftp://ftp.netbsd.org/pub/pkgsrc/pkgsrc-#{version}/pkgsrc-#{version}.tar.xz"
-      abort 'Checksum mismatch. :/ Try again.'.lightred unless Digest::SHA256.hexdigest( File.read("pkgsrc-#{version}.tar.xz") ) == '133d2f79115c87ad7dbf6f7ab604ddc0d09afe3b1d3c4cda5670c1fb758eb283'
+      abort 'Checksum mismatch. :/ Try again.'.lightred unless Digest::SHA256.hexdigest( File.read("pkgsrc-#{version}.tar.xz") ) == 'e7d33ff27729ff7b88d0a8d3a16a3eaef643c15cf1986341a4d71072fe429ed5'
       system "tar xvf pkgsrc-#{version}.tar.xz"
       FileUtils.rm_f "pkgsrc-#{version}.tar.xz"
       FileUtils.rm_rf 'wrk'
     end
-    system "install -Dm755 pkglocate #{CREW_DEST_PREFIX}/pkg/sbin/pkglocate"
+
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/pkg/sbin/"
+    FileUtils.install 'pkglocate', "#{CREW_DEST_PREFIX}/pkg/sbin/pkglocate", mode: 0755
 
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/etc/env.d/"
     @env = <<~EOF
