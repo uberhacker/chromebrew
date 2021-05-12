@@ -14,6 +14,8 @@ class Ncat < Package
   binary_sha256 ({
   })
 
+  depends_on 'libpcap'
+
   def self.patch
     #fixup "/usr/bin/file" -> "file" in the configure script
     system "sed -i s#/usr/bin/file##{CREW_PREFIX}/bin/file#g libdnet-stripped/configure"
