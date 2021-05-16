@@ -6,21 +6,15 @@ require 'package'
 class Epiphany < Package
   description 'A GNOME web browser based on the WebKit rendering engine'
   homepage 'https://wiki.gnome.org/Apps/Web'
-  version '40.0'
+  version '40.1'
   license 'GPL'
   compatibility 'x86_64 aarch64 armv7l'
   source_url "https://gitlab.gnome.org/GNOME/epiphany/-/archive/#{version}/epiphany-#{version}.tar.bz2"
-  source_sha256 '2603fcc30ea8c2ba1343eda845c70825af0749db1c5e1ef252240e30dd855c06'
+  source_sha256 '0f906479949e8413601008da00291fbdebcf410c85f6dfa4d5a83d5b34a30183'
 
   binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/epiphany/40.0_armv7l/epiphany-40.0-chromeos-armv7l.tar.xz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/epiphany/40.0_armv7l/epiphany-40.0-chromeos-armv7l.tar.xz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/epiphany/40.0_x86_64/epiphany-40.0-chromeos-x86_64.tar.xz'
   })
   binary_sha256({
-    aarch64: '8985d22d9a78b08b3a8419acb4e9b808e2a1b4295c8d718a48cc9425025b6ca2',
-     armv7l: '8985d22d9a78b08b3a8419acb4e9b808e2a1b4295c8d718a48cc9425025b6ca2',
-     x86_64: '16990d7104da6872cfeb93f5fcbbc184d2d22f476dd544af848b22196f9facd0'
   })
 
   depends_on 'atk'
