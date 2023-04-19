@@ -140,6 +140,11 @@ url: https://github.com/GNOME/amtk/releases
 activity: medium
 ---
 kind: url
+name: anagram
+url: http://www.fourmilab.ch/anagram/
+activity: none
+---
+kind: url
 name: android_sdk_tools
 url: https://developer.android.com/studio
 activity: low
@@ -160,9 +165,9 @@ url: http://www.andre-simon.de/zip/download.php
 activity: none
 ---
 kind: url
-name: anagram
-url: http://www.fourmilab.ch/anagram/
-activity: none
+name: anydesk
+url: https://download.anydesk.com/linux
+activity: high
 ---
 kind: url
 name: ant
