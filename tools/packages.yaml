@@ -1020,6 +1020,11 @@ url: https://github.com/ojab/BLFS/releases
 activity: low
 ---
 kind: url
+name: conjure_gui
+url: https://github.com/nate-xyz/conjure/releases
+activity: medium
+---
+kind: url
 name: conmon
 url: https://github.com/containers/conmon/releases
 activity: high
