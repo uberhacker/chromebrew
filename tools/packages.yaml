@@ -6446,6 +6446,11 @@ url: http://www.live555.com/liveMedia/public/
 activity: medium
 ---
 kind: url
+name: openshot
+url: https://github.com/OpenShot/openshot-qt/releases
+activity: medium
+---
+kind: url
 name: opensp
 url: https://sourceforge.net/projects/openjade/files/opensp/
 activity: none
