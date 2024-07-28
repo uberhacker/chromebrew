@@ -6516,6 +6516,11 @@ url: https://github.com/p11-glue/p11-kit/releases
 activity: medium
 ---
 kind: url
+name: p4merge
+url: https://cdist2.perforce.com/perforce/
+activity: medium
+---
+kind: url
 name: p7zip_gui
 url: https://sourceforge.net/projects/p7zip/files/p7zip/
 activity: none
