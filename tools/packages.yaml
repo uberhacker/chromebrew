@@ -9106,6 +9106,11 @@ url: https://github.com/jcnelson/vdev/releases
 activity: none
 ---
 kind: url
+name: ventoy
+url: https://sourceforge.net/projects/ventoy/files/
+activity: low
+---
+kind: url
 name: veracrypt
 url: https://launchpad.net/veracrypt/+download
 activity: medium
