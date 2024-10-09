@@ -9121,6 +9121,11 @@ url: https://downloads.sourceforge.net/project/vice-emu/releases
 activity: low
 ---
 kind: url
+name: videodownloader
+url: https://www.4kdownload.com/-54
+activity: low
+---
+kind: url
 name: vidstab
 url: https://github.com/georgmartius/vid.stab/releases
 activity: none
