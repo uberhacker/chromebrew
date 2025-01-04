@@ -1,33 +1,27 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Gegl < Package
+class Gegl < Meson
   description 'GEGL (Generic Graphics Library) is a data flow based image processing framework, providing floating point processing and non-destructive image processing capabilities to GNU Image Manipulation Program and other projects.'
-  homepage 'http://gegl.org/'
-  version '0.4.40'
+  homepage 'https://gegl.org/'
+  version '0.4.52'
   license 'GPL-3+ and LGPL-3'
-  compatibility 'all'
-  source_url 'https://download.gimp.org/pub/gegl/0.4/gegl-0.4.40.tar.xz'
-  source_sha256 'cdde80d15a49dab9a614ef98f804c8ce6e4cfe1339a3c240c34f3fb45436b85d'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url "https://download.gimp.org/pub/gegl/#{version.rpartition('.')[0]}/gegl-#{version}.tar.xz"
+  source_sha256 '418c26d94be8805d7d98f6de0c6825ca26bd74fcacb6c188da47533d9ee28247'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gegl/0.4.40_armv7l/gegl-0.4.40-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gegl/0.4.40_armv7l/gegl-0.4.40-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gegl/0.4.40_i686/gegl-0.4.40-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gegl/0.4.40_x86_64/gegl-0.4.40-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '44e1852b0f8a9534bca83213b19caa7d8c21dd0e2cb6d70f543db283c501a1f7',
-     armv7l: '44e1852b0f8a9534bca83213b19caa7d8c21dd0e2cb6d70f543db283c501a1f7',
-       i686: '58ee62cb95cc60a75ecf91afe463b5896049f0206f112ec82e9abf5e24c4621f',
-     x86_64: 'c874a01a85b80451716fdd6898ab3e1e2e2df6ef6296217aea1d444e58196b69'
+    aarch64: 'fa0d3a8e0c6b229dc866f029c44c0865df03d992f54e29276a99d73cb5512405',
+     armv7l: 'fa0d3a8e0c6b229dc866f029c44c0865df03d992f54e29276a99d73cb5512405',
+     x86_64: '354e826616305bf3c9e50dc78d0368e9099bc93be1aec5cd92b85229da4bb536'
   })
 
-  depends_on 'asciidoc' => :build
+  depends_on 'py3_asciidoc' => :build
   depends_on 'babl' # R
   depends_on 'cairo' # R
   depends_on 'enscript' => :build
   depends_on 'ffmpeg' # R
-  depends_on 'gcc' # R
+  depends_on 'gcc_lib' # R
   depends_on 'gdk_pixbuf' # R
   depends_on 'gexiv2' => :build
   depends_on 'glibc' # R
@@ -37,7 +31,7 @@ class Gegl < Package
   depends_on 'jasper' # R
   depends_on 'json_glib' # R
   depends_on 'lcms' # R
-  depends_on 'libjpeg' # R
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libpng' # R
   depends_on 'librsvg' # R
   depends_on 'libsdl2' # R
@@ -47,18 +41,10 @@ class Gegl < Package
   depends_on 'openexr' # R
   depends_on 'pango' # R
   depends_on 'poppler' # R
+  depends_on 'source_highlight' => :build
   depends_on 'vala' => :build
+  depends_on 'zlib' # R
 
-  def self.build
-    system "meson #{CREW_MESON_OPTIONS} \
-      -Dlibjpeg=enabled \
-      -Dlibpng=enabled \
-    builddir"
-    system 'meson configure builddir'
-    system 'ninja -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-  end
+  meson_options '-Dlibjpeg=enabled \
+      -Dlibpng=enabled'
 end

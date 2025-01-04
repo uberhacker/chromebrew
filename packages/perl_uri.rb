@@ -1,26 +1,19 @@
-require 'package'
+require 'buildsystems/perl'
 
-class Perl_uri < Package
+class Perl_uri < PERL
   description 'Uniform Resource Identifiers (absolute and relative)'
   homepage 'https://metacpan.org/pod/URI'
-  version '5.17'
+  version "5.19-#{CREW_PERL_VER}"
   license 'GPL PerlArtistic'
   compatibility 'all'
-  source_url 'https://cpan.metacpan.org/authors/id/O/OA/OALDERS/URI-5.17.tar.gz'
-  source_sha256 '5f7e42b769cb27499113cfae4b786c37d49e7c7d32dbb469602cd808308568f8'
+  source_url 'https://cpan.metacpan.org/authors/id/S/SI/SIMBABQUE/URI-5.19.tar.gz'
+  source_sha256 '8fed5f819905c8a8e18f4447034322d042c3536b43c13ac1f09ba92e1a50a394'
+  binary_compression 'tar.zst'
 
-  no_compile_needed
-
-  def self.prebuild
-    system 'perl', 'Makefile.PL'
-    system "sed -i 's,/usr/local,#{CREW_PREFIX},g' Makefile"
-  end
-
-  def self.build
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
+  binary_sha256({
+    aarch64: '27db52f862cb79a9d36f21dedcb1e326b1e60d094beb33d91355126e3fac70a4',
+     armv7l: '27db52f862cb79a9d36f21dedcb1e326b1e60d094beb33d91355126e3fac70a4',
+       i686: '4ce90ee55cefda0811b939b46bbf93ab397ae74388ae9042f91d749a9b605115',
+     x86_64: '7e86ddc84a6ae56deb345a03fb1b162a6333c531bdff539306ea264a7717dae2'
+  })
 end

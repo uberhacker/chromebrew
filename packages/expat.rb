@@ -1,48 +1,26 @@
-require 'package'
+require 'buildsystems/cmake'
 
-class Expat < Package
+class Expat < CMake
   description 'James Clark\'s Expat XML parser library in C.'
-  homepage 'https://sourceforge.net/projects/expat/'
-  version '2.4.1'
+  homepage 'https://github.com/libexpat/libexpat'
+  version '2.6.4'
   license 'MIT'
   compatibility 'all'
-  source_url 'https://prdownloads.sourceforge.net/project/expat/expat/2.4.1/expat-2.4.1.tar.xz'
-  source_sha256 'cf032d0dba9b928636548e32b327a2d66b1aab63c4f4a13dd132c2d1d2f2fb6a'
+  source_url 'https://github.com/libexpat/libexpat.git'
+  git_hashtag "R_#{version.gsub('.', '_')}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/expat/2.4.1_armv7l/expat-2.4.1-chromeos-armv7l.tpxz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/expat/2.4.1_armv7l/expat-2.4.1-chromeos-armv7l.tpxz',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/expat/2.4.1_i686/expat-2.4.1-chromeos-i686.tpxz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/expat/2.4.1_x86_64/expat-2.4.1-chromeos-x86_64.tpxz'
-  })
   binary_sha256({
-    aarch64: '1f044a7aecace21975cb528e625a1364d485f976eb3c12e53edf85006efe2980',
-     armv7l: '1f044a7aecace21975cb528e625a1364d485f976eb3c12e53edf85006efe2980',
-       i686: '5731a665443b8e029da85c5207352e380d476c6a9bbc4810fff23fa5bb0451e4',
-     x86_64: 'e5f8529e86f68486309d884676fdd72186a6ece1864d72ac97151a2d907690d4'
+    aarch64: '394efc3fa2f9c2c50f824a17cce76a6e05762a2292ed20355b40e193cfe6a24f',
+     armv7l: '394efc3fa2f9c2c50f824a17cce76a6e05762a2292ed20355b40e193cfe6a24f',
+       i686: '209a331cf549ca5c9650019ce53f4b0df586cf3a755b291ef2a7e8e0e92b7220',
+     x86_64: 'd6701ff3fe50aac83aa42ec62353f26245d31473a435fb721f7769cef51e5330'
   })
 
   depends_on 'glibc' # R
+  run_tests
 
-  def self.patch
-    system 'filefix'
-  end
-
-  def self.build
-    system "./configure \
-       #{CREW_OPTIONS} \
-       #{CREW_ENV_OPTIONS} \
-       --enable-shared \
-       --enable-static \
-       --with-pic"
-    system 'make'
-  end
-
-  def self.check
-    system 'make', 'check'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
+  cmake_build_relative_dir 'expat'
+  cmake_options '-DEXPAT_BUILD_EXAMPLES=OFF \
+          -DBUILD_SHARED_LIBS=ON'
 end

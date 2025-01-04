@@ -1,38 +1,33 @@
-require 'package'
+require 'buildsystems/cmake'
 
-class Git < Package
+class Git < CMake
   description 'Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.'
   homepage 'https://git-scm.com/'
-  @_ver = '2.38.1'
-  version @_ver
+  version '2.47.1'
   license 'GPL-2'
   compatibility 'all'
-  source_url 'https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.38.1.tar.xz'
-  source_sha256 '97ddf8ea58a2b9e0fbc2508e245028ca75911bd38d1551616b148c1aa5740ad9'
+  source_url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-#{version}.tar.xz"
+  source_sha256 '1ce114da88704271b43e027c51e04d9399f8c88e9ef7542dae7aebae7d87bc4e'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/git/2.38.1_armv7l/git-2.38.1-chromeos-armv7l.tar.xz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/git/2.38.1_armv7l/git-2.38.1-chromeos-armv7l.tar.xz',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/git/2.38.1_i686/git-2.38.1-chromeos-i686.tar.xz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/git/2.38.1_x86_64/git-2.38.1-chromeos-x86_64.tar.xz'
-  })
   binary_sha256({
-    aarch64: '7906d63c0541c10a3195c8735dd18003f84d583cc2ca1ebc8f5dedc6ef80a456',
-     armv7l: '7906d63c0541c10a3195c8735dd18003f84d583cc2ca1ebc8f5dedc6ef80a456',
-       i686: '35181a0c42269a0504f083a63afe809abd4e649e8673e48e772f03e63abfaf50',
-     x86_64: '9f87306b698fc16beebc67c96186cb511eddeb3062a1b1db6daa2adf0fb83732'
+    aarch64: 'cc131c193087acc6435d5bbc5e128a78bb0b21a3b230cd21a09f653add0e26d4',
+     armv7l: 'cc131c193087acc6435d5bbc5e128a78bb0b21a3b230cd21a09f653add0e26d4',
+       i686: '5ee9c7364e7d6371f4db19113587e797e48a122d597500456a5c0dc703d29491',
+     x86_64: '82e81a9e51da7914d9edb19d5cf7c306efaca52b692709182bb0c3ea92b4a141'
   })
 
   depends_on 'ca_certificates' => :build
-  depends_on 'libcurl'
-  depends_on 'libunistring'
-  depends_on 'pcre2'
-  depends_on 'zlibpkg'
+  depends_on 'curl' # R
   depends_on 'expat' # R
   depends_on 'glibc' # R
+  depends_on 'libunistring' # R
+  depends_on 'pcre2' # R
+  depends_on 'zlib' # R
 
-  no_patchelf
-  no_zstd
+  print_source_bashrc
+  cmake_build_relative_dir 'contrib/buildsystems'
+  cmake_options '-DUSE_VCPKG=FALSE'
 
   def self.patch
     # Patch to prevent error function conflict with libidn2
@@ -55,32 +50,42 @@ class Git < Package
     system "sed -i 's,${CMAKE_INSTALL_PREFIX}/bin/git,${CMAKE_BINARY_DIR}/git,g' contrib/buildsystems/CMakeLists.txt"
     system "sed -i 's,${CMAKE_INSTALL_PREFIX}/bin/git,\\\\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/git,g' contrib/buildsystems/CMakeLists.txt"
     system "sed -i 's,${CMAKE_INSTALL_PREFIX},\\\\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX},g' contrib/buildsystems/CMakeLists.txt"
+
+    # Git 2.47.0 broke cmake out of tree builds.
+    system "sed -i 's,file(WRITE \"\${CMAKE_BINARY_DIR}/t/unit-tests,file(WRITE \"\${CMAKE_SOURCE_DIR}/t/unit-tests,g' contrib/buildsystems/CMakeLists.txt"
   end
 
-  def self.build
-    Dir.mkdir 'contrib/buildsystems/builddir'
-    Dir.chdir 'contrib/buildsystems/builddir' do
-      system "mold -run cmake \
-          #{CREW_CMAKE_OPTIONS} \
-          -DUSE_VCPKG=FALSE \
-          -Wdev \
-          -G Ninja \
-          .."
-      system 'mold -run samu'
-    end
+  cmake_build_extras do
+    git_env = <<~EOF
+
+      GIT_PS1_SHOWDIRTYSTATE=yes
+      GIT_PS1_SHOWSTASHSTATE=yes
+      GIT_PS1_SHOWUNTRACKEDFILES=yes
+      GIT_PS1_SHOWUPSTREAM=auto
+      GIT_PS1_DESCRIBE_STYLE=default
+      GIT_PS1_SHOWCOLORHINTS=yes
+
+      # Add LIBC_VERSION and CHROMEOS_RELEASE_CHROME_MILESTONE set in
+      # crew_profile_base to prompt if in a container.
+      if [[ -e /.dockerenv ]] && [ -n "${LIBC_VERSION+1}" ] && [ -n "${CHROMEOS_RELEASE_CHROME_MILESTONE+1}" ]; then
+        PS1='\\[\\033[1;34m\\]\\u@\\H:$LIBC_VERSION M$CHROMEOS_RELEASE_CHROME_MILESTONE \\[\\033[1;33m\\]\\w \\[\\033[1;31m\\]$(__git_ps1 "(%s)")\\[\\033[0m\\]\\$ '
+      else
+        PS1='\\[\\033[1;34m\\]\\u@\\H \\[\\033[1;33m\\]\\w \\[\\033[1;31m\\]$(__git_ps1 "(%s)")\\[\\033[0m\\]\\$ '
+      fi
+    EOF
+    File.write('contrib/completion/git-prompt.sh', git_env, mode: 'a')
   end
 
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} samu -C contrib/buildsystems/builddir install"
+  cmake_install_extras do
     FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/git-completion"
     FileUtils.cp_r Dir.glob('contrib/completion/.'), "#{CREW_DEST_PREFIX}/share/git-completion/"
 
-    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/etc/bash.d/"
-    @git_bashd_env = <<~GIT_BASHD_EOF
+    File.write 'git_bashd_env', <<~GIT_BASHD_EOF
       # git bash completion
       source #{CREW_PREFIX}/share/git-completion/git-completion.bash
     GIT_BASHD_EOF
-    File.write("#{CREW_DEST_PREFIX}/etc/bash.d/git", @git_bashd_env)
+    FileUtils.install 'git_bashd_env', "#{CREW_DEST_PREFIX}/etc/bash.d/git", mode: 0o644
+    FileUtils.install 'contrib/completion/git-prompt.sh', "#{CREW_DEST_PREFIX}/etc/bash.d/git-prompt.sh", mode: 0o644
   end
 
   def self.check
@@ -90,5 +95,13 @@ class Git < Package
            File.exist?("#{CREW_DEST_PREFIX}/libexec/git-core/git-remote-https")
       abort 'git-remote-https is broken'.lightred
     end
+  end
+
+  def self.postinstall
+    ExitMessage.add "\ncd /path/to/git/repo and you should see the branch displayed in the prompt.\n".lightblue
+    return unless File.directory?("#{CREW_PREFIX}/lib/crew/.git")
+
+    puts 'Running git garbage collection...'.lightblue
+    system 'git gc', chdir: CREW_LIB_PATH, exception: false
   end
 end

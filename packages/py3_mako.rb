@@ -1,36 +1,23 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_mako < Package
+class Py3_mako < Pip
   description 'Mako is a super fast templating language.'
   homepage 'https://www.makotemplates.org/'
-  @_ver = '1.1.5'
-  version @_ver
+  version "1.3.8-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/sqlalchemy/mako.git'
-  git_hashtag "rel_#{@_ver.gsub('.', '_')}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_mako/1.1.5_armv7l/py3_mako-1.1.5-chromeos-armv7l.tpxz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_mako/1.1.5_armv7l/py3_mako-1.1.5-chromeos-armv7l.tpxz',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_mako/1.1.5_i686/py3_mako-1.1.5-chromeos-i686.tpxz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_mako/1.1.5_x86_64/py3_mako-1.1.5-chromeos-x86_64.tpxz'
-  })
   binary_sha256({
-    aarch64: 'd87113392071930eaa7b0ba8aea2a52bcc1652a4ad49e966858e79b305416879',
-     armv7l: 'd87113392071930eaa7b0ba8aea2a52bcc1652a4ad49e966858e79b305416879',
-       i686: '97287f560d220954e690c87ad2642538520d226a1566fd0ff2b9cdaf281d78e9',
-     x86_64: 'ca623e5a094c1a2a845a328549e7ffba65335bdb744df248288dc2a70960df0e'
+    aarch64: '9af9a1e7ad11ca7e0d05f48ad10e7c954dc0be809152ab60cd4b22d235f3e0b9',
+     armv7l: '9af9a1e7ad11ca7e0d05f48ad10e7c954dc0be809152ab60cd4b22d235f3e0b9',
+       i686: '755ccb9d1bc4bdfa3c040c63ee676a5df997a50eb09969dff4a778e3c8fd05d2',
+     x86_64: '27a69a779929a48ef31dc7f59208037c0af315d9dbb136187de7f09eccd49165'
   })
 
   depends_on 'py3_markupsafe'
-  depends_on 'py3_setuptools' => :build
+  depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

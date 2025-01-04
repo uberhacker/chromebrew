@@ -1,36 +1,32 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Erlang < Package
+class Erlang < Autotools
   description 'Erlang is a programming language used to build massively scalable soft real-time systems with requirements on high availability.'
   homepage 'https://www.erlang.org/'
-  version '25.0'
+  version '27.1.2'
   license 'Apache-2.0'
-  compatibility 'all'
-  source_url 'https://erlang.org/download/otp_src_25.0.tar.gz'
-  source_sha256 '3e1e2e55409e9484e69b316fcd00ff7e2ed606bcfb2c7cac514f9b9aeb9651e8'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url 'https://github.com/erlang/otp.git'
+  git_hashtag "OTP-#{version}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/erlang/25.0_armv7l/erlang-25.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/erlang/25.0_armv7l/erlang-25.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/erlang/25.0_i686/erlang-25.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/erlang/25.0_x86_64/erlang-25.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '05dab34ca35b1cc29e31114ad88382b40477985927f93e4f6514e60a66f8d7f8',
-     armv7l: '05dab34ca35b1cc29e31114ad88382b40477985927f93e4f6514e60a66f8d7f8',
-       i686: '5218ffcd054d29bf5754aedec73777a62b061785358d8bf021a36434deb89b60',
-     x86_64: '4d34f06850d5a5e6bdd6fc778eab27cdb72501086cd2d130d5ff4e663943ccbf'
+    aarch64: 'ed0d27601c42358b0dccb215893944b19944868853a32bff415979efb28b147b',
+     armv7l: 'ed0d27601c42358b0dccb215893944b19944868853a32bff415979efb28b147b',
+     x86_64: '3521d599950e27b3ccd6987a5e5f7750aec57b72593cdea3c5133b3a8e5cc964'
   })
 
-  depends_on 'jdk8'
+  depends_on 'openjdk8'
   depends_on 'wxwidgets'
+  depends_on 'gcc_lib' # R
+  depends_on 'glib' # R
+  depends_on 'glibc' # R
+  depends_on 'libglu' # R
+  depends_on 'libglvnd' # R
+  depends_on 'ncurses' # R
+  depends_on 'openssl' # R
+  depends_on 'unixodbc' # R
+  depends_on 'zlib' # R
 
-  def self.build
-    ENV['ERL_OTP'] = Dir.pwd
-    system "./configure #{CREW_OPTIONS} && make"
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
+  configure_options "ERL_OTP=#{Dir.pwd} #{'--disable-year2038' unless ARCH.eql?('x86_64')}"
 end

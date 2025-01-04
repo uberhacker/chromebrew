@@ -2,24 +2,19 @@ require 'package'
 
 class Ant < Package
   description 'Apache Ant is a Java library and command-line tool whose mission is to drive processes described in build files as targets and extension points dependent upon each other.'
-  homepage 'http://ant.apache.org/'
-  version '1.10.12'
+  homepage 'https://ant.apache.org/'
+  version '1.10.14'
   license 'Apache-2.0'
   compatibility 'all'
-  source_url 'https://downloads.apache.org/ant/source/apache-ant-1.10.12-src.tar.xz'
-  source_sha256 '7629bb10285c5de609df56ae9bc968332f3d34d6cd5c0a5dffe24078e09e98b3'
+  source_url 'https://downloads.apache.org/ant/source/apache-ant-1.10.14-src.tar.xz'
+  source_sha256 '9eea3cd8a793574a07fde2f87b203dc86339492baeb539367d5aa5be497aea24'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ant/1.10.12_armv7l/ant-1.10.12-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ant/1.10.12_armv7l/ant-1.10.12-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ant/1.10.12_i686/ant-1.10.12-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ant/1.10.12_x86_64/ant-1.10.12-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '9dc7ee71af5a01d4296f10088f85f56eaaa7fee7ce2e17d2fec333b3e695e85e',
-     armv7l: '9dc7ee71af5a01d4296f10088f85f56eaaa7fee7ce2e17d2fec333b3e695e85e',
-       i686: '4d395d93af5b3d4593ca5f5a63c7afb6c024fd20a195da0d821c91941b952de6',
-     x86_64: '54e4732e54364e068ae90a953ef80364e099bf5523208c1e03c7ab1ef0ad2b65'
+    aarch64: '467ba617135bbe2ba177bacbe2c98b9a520361b21d14b3e2508acee527c9f588',
+     armv7l: '467ba617135bbe2ba177bacbe2c98b9a520361b21d14b3e2508acee527c9f588',
+       i686: '979f1f0284376f53b341b8d3e015ce5bc0d425931590e5a6bde21b9de87157c2',
+     x86_64: '2763cdc4ddd5fa2a1b71f766302204f30814fad4a82528e09f947a779bc5da1a'
   })
 
   depends_on 'openjdk8'

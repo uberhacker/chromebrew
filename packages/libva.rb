@@ -1,49 +1,28 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Libva < Package
+class Libva < Meson
   description 'Libva is an implementation for VA-API (Video Acceleration API)'
   homepage 'https://01.org/linuxmedia'
-  @_ver = '2.17.0-65c67dd'
-  version @_ver
+  version '2.22.0'
   license 'MIT'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://github.com/intel/libva.git'
-  git_hashtag '65c67dd2bd6b68afa5d86a8f9bdba6aa592e686f'
+  git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libva/2.17.0-65c67dd_armv7l/libva-2.17.0-65c67dd-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libva/2.17.0-65c67dd_armv7l/libva-2.17.0-65c67dd-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libva/2.17.0-65c67dd_i686/libva-2.17.0-65c67dd-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libva/2.17.0-65c67dd_x86_64/libva-2.17.0-65c67dd-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'efd4503cce64adac7d896910a91d4810f3a9f4a7aaa5a151f1a4f7eb2bfcf809',
-     armv7l: 'efd4503cce64adac7d896910a91d4810f3a9f4a7aaa5a151f1a4f7eb2bfcf809',
-       i686: '451310b158efdc080fe14516c394f6345ba9ec17a3946cc391fa8096b6aeffaa',
-     x86_64: '7836a07d6c3f7c951687b0e5a779536e30d3668d3fa211beb547b97bb4d3094c'
+    aarch64: 'df90f06f31baa1d5788f74db2e7375d1b55a65139682b462d48ea7d4c2288414',
+     armv7l: 'df90f06f31baa1d5788f74db2e7375d1b55a65139682b462d48ea7d4c2288414',
+     x86_64: 'd69d1976c650f61712667bdbafecf9a0ca7cf8af250c8d1e0496a31e35031791'
   })
 
   depends_on 'glibc' # R
-  depends_on 'libdrm'
-  depends_on 'libx11'
-  depends_on 'libxext'
-  depends_on 'libxfixes'
-  depends_on 'mesa'
-  depends_on 'wayland'
-
-  def self.build
-    system "meson #{CREW_MESON_OPTIONS} \
-    --default-library=both \
-    builddir"
-    system 'meson configure builddir'
-    system 'ninja -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-  end
-
-  def self.check
-    system 'ninja -C builddir test'
-  end
+  depends_on 'libdrm' # R
+  depends_on 'libglvnd' # R
+  depends_on 'libx11' # R
+  depends_on 'libxcb' # R
+  depends_on 'libxext' # R
+  depends_on 'libxfixes' # R
+  depends_on 'mesa' # L
+  depends_on 'wayland' # R
 end

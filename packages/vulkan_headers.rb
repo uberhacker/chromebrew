@@ -1,40 +1,18 @@
-require 'package'
+require 'buildsystems/cmake'
 
-class Vulkan_headers < Package
+class Vulkan_headers < CMake
   description 'Vulkan header files'
   homepage 'https://github.com/KhronosGroup/Vulkan-Headers'
-  @_ver = '1.3.231'
-  version @_ver
+  version '1.4.303'
   license 'Apache-2.0'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://github.com/KhronosGroup/Vulkan-Headers.git'
-  git_hashtag "v#{@_ver}"
+  git_hashtag "v#{version}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vulkan_headers/1.3.231_armv7l/vulkan_headers-1.3.231-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vulkan_headers/1.3.231_armv7l/vulkan_headers-1.3.231-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vulkan_headers/1.3.231_i686/vulkan_headers-1.3.231-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vulkan_headers/1.3.231_x86_64/vulkan_headers-1.3.231-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'b19c5a426f01cf251c5660abccae19f6ab5082bdd12c7b6470856579664e0897',
-     armv7l: 'b19c5a426f01cf251c5660abccae19f6ab5082bdd12c7b6470856579664e0897',
-       i686: '12f2ae15bff517cbefbbe61e59b408431235f60b78d6adef55740d5eb3ca83b2',
-     x86_64: 'b627b23a35c7f934e7eed6227091dd897e8c4554102cc387fbf75379dd3de1d5'
+    aarch64: '895f12a973b319fa30e57835001675fca677b9128b7d8ee2fbd7cc40cc2af4b1',
+     armv7l: '895f12a973b319fa30e57835001675fca677b9128b7d8ee2fbd7cc40cc2af4b1',
+     x86_64: '95df33b08db9c3bd6b73bd4a3983e55ea85b65707f0bc76f32aed12a0075fc02'
   })
-
-  def self.build
-    Dir.mkdir 'builddir'
-    Dir.chdir 'builddir' do
-      system "cmake \
-        -G Ninja \
-        #{CREW_CMAKE_OPTIONS} \
-        .."
-    end
-    system 'mold -run samu -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} samu -C builddir install"
-  end
 end

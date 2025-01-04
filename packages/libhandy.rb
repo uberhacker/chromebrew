@@ -1,47 +1,37 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Libhandy < Package
+class Libhandy < Meson
   description 'The aim of the handy library is to help with developing UI for mobile devices using GTK/GNOME.'
   homepage 'https://gitlab.gnome.org/GNOME/libhandy/'
-  @_ver = '1.8.0'
-  version @_ver
+  version '1.8.3'
   license 'LGPL-2.1+'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.gnome.org/GNOME/libhandy.git'
-  git_hashtag @_ver
+  git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libhandy/1.8.0_armv7l/libhandy-1.8.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libhandy/1.8.0_armv7l/libhandy-1.8.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libhandy/1.8.0_i686/libhandy-1.8.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libhandy/1.8.0_x86_64/libhandy-1.8.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '570f7011b52c4599c7cf7021d8aff15b0a93621d381030d5e04640498239565e',
-     armv7l: '570f7011b52c4599c7cf7021d8aff15b0a93621d381030d5e04640498239565e',
-       i686: '5a12c0b53e78054068d93d68428106ba0d15a2b9a93ee411d2cb666cffeabffb',
-     x86_64: '5bb6704da3f64fb2a1259fc79dae2680804d007316c552c23a8eefb506ca53f2'
+    aarch64: 'fe03a956c9c8249e5cf5faac8a9f8cf7b9119c816b3dbe2f4d0172a283355763',
+     armv7l: 'fe03a956c9c8249e5cf5faac8a9f8cf7b9119c816b3dbe2f4d0172a283355763',
+     x86_64: '1356e5fa0d54329d76250baf3b23b114b9ffee5c5acab55a3bdf7d03d103b4a3'
   })
 
-  depends_on 'atk'
-  depends_on 'cairo'
-  depends_on 'fribidi'
-  depends_on 'gdk_pixbuf'
-  depends_on 'glib'
-  depends_on 'gtk3'
-  depends_on 'libjpeg'
-  depends_on 'pango'
-  depends_on 'vala'
+  depends_on 'at_spi2_core' # R
+  depends_on 'cairo' # R
+  depends_on 'fribidi' # R
+  depends_on 'gcc_lib' # R
+  depends_on 'gdk_pixbuf' # R
+  depends_on 'glade' # R
   depends_on 'glibc' # R
+  depends_on 'glib' # R
+  depends_on 'gtk3' # R
   depends_on 'harfbuzz' # R
+  depends_on 'libjpeg_turbo' => :build
+  depends_on 'pango' # R
+  depends_on 'vala' => :build
+  depends_on 'zlib' => :build
 
-  def self.build
-    system "meson #{CREW_MESON_OPTIONS} builddir"
-    system 'meson configure builddir'
-    system 'ninja -C builddir'
-  end
+  gnome
 
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-  end
+  meson_options '-Dexamples=false'
 end

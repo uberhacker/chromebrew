@@ -1,57 +1,42 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Wayland < Package
+class Wayland < Meson
   description 'Wayland is intended as a simpler replacement for X, easier to develop and maintain.'
   homepage 'https://wayland.freedesktop.org'
-  @_ver = '1.21.0'
-  version "#{@_ver}-1"
+  version "1.23.1-#{CREW_ICU_VER}"
   license 'MIT'
   compatibility 'all'
   source_url 'https://gitlab.freedesktop.org/wayland/wayland.git'
-  git_hashtag @_ver
+  git_hashtag version.split('-').first
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/wayland/1.21.0-1_armv7l/wayland-1.21.0-1-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/wayland/1.21.0-1_armv7l/wayland-1.21.0-1-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/wayland/1.21.0-1_i686/wayland-1.21.0-1-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/wayland/1.21.0-1_x86_64/wayland-1.21.0-1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '4a655aa1bab807fc82eaabc6c62489c0e0d576d1e16d01cebd536ba203d81832',
-     armv7l: '4a655aa1bab807fc82eaabc6c62489c0e0d576d1e16d01cebd536ba203d81832',
-       i686: 'b0c830aa7f4b7970b45b48b57b47ed4d765b2af6908ebf71e72f1814719bdd0e',
-     x86_64: '27ef241ce34cc01b8a36ccd4ae4b7dc83e080d9e6c3fdb12a1d99a5303fddf15'
+    aarch64: 'b6f79f1d26cf93d9effaa46756a2319f4ca8680e02cb23d897d08a9b84c63c6a',
+     armv7l: 'b6f79f1d26cf93d9effaa46756a2319f4ca8680e02cb23d897d08a9b84c63c6a',
+       i686: 'a0a324eea67718aeffa1fcd050626088cafffd02bd24e1b5f111cdc2f54bc48e',
+     x86_64: 'c53a3cc2c8bad1f6c49a7f0c4865d9493522611012bcb66ef9bd0dec333f8030'
   })
 
-  depends_on 'expat'
-  depends_on 'libxml2'
-  depends_on 'gcc'
-  depends_on 'icu4c'
-  depends_on 'zlibpkg'
-  depends_on 'libffi'
+  depends_on 'expat' # R
+  depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
+  depends_on 'icu4c' => :build
+  depends_on 'libffi' # R
+  depends_on 'libxml2' # R
+  depends_on 'zlib' => :build
 
-  def self.build
-    @wayland_env = <<~WAYLAND_ENV_EOF
+  meson_options '-Ddocumentation=false'
+
+  def self.install
+    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
+    File.write 'waylandenv', <<~WAYLAND_ENV_EOF
       # environment set-up for Chrome OS built-in Wayland server
-      set -a
-
       : "${XDG_RUNTIME_DIR:=/var/run/chrome}"
       : "${XDG_SESSION_TYPE:=wayland}"
       : "${WAYLAND_DISPLAY:=wayland-0}"
       : "${CLUTTER_BACKEND:=wayland}"
       : "${GDK_BACKEND:=wayland}"
-      set +a
     WAYLAND_ENV_EOF
-
-    system "meson #{CREW_MESON_OPTIONS} -Ddocumentation=false builddir"
-    system 'meson configure builddir'
-    system 'ninja -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-    FileUtils.mkdir_p("#{CREW_DEST_PREFIX}/etc/env.d/")
-    File.write("#{CREW_DEST_PREFIX}/etc/env.d/wayland", @wayland_env)
+    FileUtils.install 'waylandenv', "#{CREW_DEST_PREFIX}/etc/env.d/wayland", mode: 0o644
   end
 end

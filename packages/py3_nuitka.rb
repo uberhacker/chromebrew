@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_nuitka < Package
+class Py3_nuitka < Pip
   description 'Nuitka is a Python to binary compiler written in Python. You feed it your Python app, it does a lot of clever things, and spits out an executable or extension module.'
   homepage 'https://nuitka.net/'
-  @_ver = '0.6.18.5'
-  version @_ver
+  version "2.5.9-#{CREW_PY_VER}"
   license 'Apache-2.0'
   compatibility 'all'
-  source_url 'https://files.pythonhosted.org/packages/78/b3/e8b6f9d728454a1be16bcc4921e5ea55804587d89e8f8637c89d33ae11da/Nuitka-0.6.18.5.tar.gz'
-  source_sha256 'a9c7b49d0bd6ae73fe299772b0f2ae95e6d5d9a20de128932bcc5b92826f0ea7'
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_nuitka/0.6.18.5_armv7l/py3_nuitka-0.6.18.5-chromeos-armv7l.tpxz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_nuitka/0.6.18.5_armv7l/py3_nuitka-0.6.18.5-chromeos-armv7l.tpxz',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_nuitka/0.6.18.5_i686/py3_nuitka-0.6.18.5-chromeos-i686.tpxz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_nuitka/0.6.18.5_x86_64/py3_nuitka-0.6.18.5-chromeos-x86_64.tpxz'
-  })
   binary_sha256({
-    aarch64: '28fcd09039c0d12758806a8d8083ec410ce73c6382581906cf4934fb6f4ebff4',
-     armv7l: '28fcd09039c0d12758806a8d8083ec410ce73c6382581906cf4934fb6f4ebff4',
-       i686: 'bd1f33a43e05eb874706a1b90bfc80dcdd085442cf6c6414bd6c25f7b71e9faa',
-     x86_64: '26a84ef600a85bed53bb9f5cf8eb6202c8686389908061588f08fa52f9b6737a'
+    aarch64: 'f0375b52e6d1282f7f6b622ceb1154231fc72603a98f3bc26c94413e95646f40',
+     armv7l: 'f0375b52e6d1282f7f6b622ceb1154231fc72603a98f3bc26c94413e95646f40',
+       i686: '953b5c0bc34c3889f47965b79f2cd25986b7237a22f8c2a5184340bdcabdf6d2',
+     x86_64: 'db7ff6ab8b7e54372668a12acd7c3ec0c7899051eff0dd1350d07ead34663fb6'
   })
 
-  depends_on 'py3_setuptools' => :build
+  depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

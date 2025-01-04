@@ -3,47 +3,48 @@ require 'package'
 class Libtiff < Package
   description 'LibTIFF provides support for the Tag Image File Format (TIFF), a widely used format for storing image data.'
   homepage 'http://www.libtiff.org/'
-  version '4.4.0'
+  version '4.6.0'
   license 'libtiff'
   compatibility 'all'
-  source_url 'https://download.osgeo.org/libtiff/tiff-4.4.0.tar.xz'
-  source_sha256 '49307b510048ccc7bc40f2cba6e8439182fe6e654057c1a1683139bf2ecb1dc1'
+  source_url 'https://download.osgeo.org/libtiff/tiff-4.6.0.tar.xz'
+  source_sha256 'e178649607d1e22b51cf361dd20a3753f244f022eefab1f2f218fc62ebaf87d2'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtiff/4.4.0_armv7l/libtiff-4.4.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtiff/4.4.0_armv7l/libtiff-4.4.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtiff/4.4.0_i686/libtiff-4.4.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtiff/4.4.0_x86_64/libtiff-4.4.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'a971b42ca81eaf5375b09c69b34e14d367a8c0b86802d25dc1c8f0b89ed6ab76',
-     armv7l: 'a971b42ca81eaf5375b09c69b34e14d367a8c0b86802d25dc1c8f0b89ed6ab76',
-       i686: '2eaf5efe70745023e0f70670247338eebc7b75df8df85ec72980056954d7a924',
-     x86_64: '33129073011fd853518e91376a84fa0ddbc61605c041297c0d130294a113f389'
+    aarch64: 'c07999f1adeab936eb8f5f95f3a538abee49a7807ae83059b4aa8118140285b0',
+     armv7l: 'c07999f1adeab936eb8f5f95f3a538abee49a7807ae83059b4aa8118140285b0',
+       i686: '7f9546738a572a655c77cf0276b10f50b20d1d074f998928e5103f6e8b07bf6a',
+     x86_64: '1e96c774a4e20cc55d62139080206c20476e6ac7ed0340191673de35eca7c125'
   })
 
-  depends_on 'freeglut'
-  depends_on 'imake' => :build
-  depends_on 'libdeflate'
-  depends_on 'libglu'
-  depends_on 'libice'
-  depends_on 'libjpeg'
-  depends_on 'libsm'
-  depends_on 'libwebp'
-  depends_on 'libx11'
-  depends_on 'libxi'
-  depends_on 'mesa'
-  depends_on 'wget' => :build
-  depends_on 'zstd'
-  depends_on 'gcc' # R
+  depends_on 'freeglut' unless ARCH == 'i686' # R
+  depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
+  depends_on 'imake' => :build
+  depends_on 'jbigkit' # R
+  depends_on 'libdeflate' # R
+  depends_on 'libglu' unless ARCH == 'i686' # R
+  depends_on 'libglvnd' unless ARCH == 'i686' # R
+  depends_on 'libice' unless ARCH == 'i686' # R
+  depends_on 'libjpeg_turbo' # R
+  depends_on 'libsm' unless ARCH == 'i686' # R
+  depends_on 'libwebp' unless ARCH == 'i686' # R
+  depends_on 'libx11' unless ARCH == 'i686' # R
+  depends_on 'libxi' unless ARCH == 'i686' # R
+  depends_on 'mesa' => :build unless ARCH == 'i686'
+  depends_on 'wget2' => :build
   depends_on 'xzutils' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
+  depends_on 'zstd' # R
+
+  gnome
+  no_env_options
 
   def self.build
     system '[ -x configure ] || NOCONFIGURE=1 ./autogen.sh'
-    system "./configure #{CREW_OPTIONS} \
-      --with-x \
+    @x = ARCH == 'i686' ? '' : '--with-x --enable-webp'
+    system "#{CREW_ENV_OPTIONS.gsub('-mfpu=vfpv3-d16', '-mfpu=neon-fp16')} ./configure #{CREW_CONFIGURE_OPTIONS} \
+      #{@x} \
       --enable-zlib \
       --enable-mdi \
       --enable-libdeflate \
@@ -51,19 +52,13 @@ class Libtiff < Package
       --enable-jpeg \
       --enable-lzma \
       --enable-zstd \
-      --enable-webp \
       --enable-cxx"
     system 'make'
   end
 
   def self.install
     system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
-
-  def self.postinstall
-    return unless File.exist?("#{CREW_PREFIX}/bin/gdk-pixbuf-query-loaders")
-
-    system 'gdk-pixbuf-query-loaders',
-           '--update-cache'
+    # Remove static library.
+    FileUtils.rm "#{CREW_DEST_LIB_PREFIX}/libtiff.a"
   end
 end

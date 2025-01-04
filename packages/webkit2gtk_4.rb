@@ -1,35 +1,30 @@
+require 'package'
+
 class Webkit2gtk_4 < Package
   description 'Web content engine for GTK'
   homepage 'https://webkitgtk.org'
-  version '2.38.2'
+  version '2.42.1'
   license 'LGPL-2+ and BSD-2'
-  compatibility 'all'
-  source_url 'https://webkitgtk.org/releases/webkitgtk-2.38.2.tar.xz'
-  source_sha256 'f3eb82899651f583b4d99cacd16af784a1a7710fce9e7b6807bd6ccde909fe3e'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url 'https://webkitgtk.org/releases/webkitgtk-2.42.1.tar.xz'
+  source_sha256 '6f41fac9989d3ee51c08c48de1d439cdeddecbc757e34b6180987d99b16d2499'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/webkit2gtk_4/2.38.2_armv7l/webkit2gtk_4-2.38.2-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/webkit2gtk_4/2.38.2_armv7l/webkit2gtk_4-2.38.2-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/webkit2gtk_4/2.38.2_i686/webkit2gtk_4-2.38.2-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/webkit2gtk_4/2.38.2_x86_64/webkit2gtk_4-2.38.2-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '2f8dd6bd1d070fae699d56efbe844c3b02ff1f7efe8f314ce9f3f17075813e60',
-     armv7l: '2f8dd6bd1d070fae699d56efbe844c3b02ff1f7efe8f314ce9f3f17075813e60',
-       i686: '480b6c18c735be76735e5fe7acc386c01171300132e025779df022d2cbca0141',
-     x86_64: '66d3ecaa53fbde5917eb6b7d1ee0e5883e736fbe461650fbff7140635d26a685'
+    aarch64: 'dfc34529afd99bd8c619757b4b3d7b837b819a8554fe291f5e936b09ed447133',
+     armv7l: 'dfc34529afd99bd8c619757b4b3d7b837b819a8554fe291f5e936b09ed447133',
+     x86_64: '6349949a24e1fbae37cb576454602287e136efb305ac7cd506a0ae84c6d26d98'
   })
 
-  depends_on 'atk' # R
   depends_on 'at_spi2_core' # R
   depends_on 'cairo'
-  # depends_on 'ccache' => :build
+  depends_on 'ccache' => :build
   depends_on 'dav1d'
   depends_on 'enchant' # R
   depends_on 'fontconfig'
   depends_on 'freetype' # R
-  depends_on 'gcc10' => :build if %w[aarch64 armv7l i686].include? ARCH
-  depends_on 'gcc' # R
+  depends_on 'gcc10' => :build
+  depends_on 'gcc_lib' # R
   depends_on 'gdk_pixbuf' # R
   depends_on 'glibc' # R
   depends_on 'glib' # R
@@ -42,10 +37,12 @@ class Webkit2gtk_4 < Package
   depends_on 'icu4c' # R
   depends_on 'lcms' # R
   depends_on 'libavif' # R
+  depends_on 'libdrm' # R
+  depends_on 'libepoxy' # R
   depends_on 'libgcrypt' # R
   depends_on 'libglvnd' # R
-  depends_on 'libgpgerror' # R
-  depends_on 'libjpeg' # R
+  depends_on 'libgpg_error' # R
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libjxl' # R
   depends_on 'libnotify'
   depends_on 'libpng' # R
@@ -68,13 +65,14 @@ class Webkit2gtk_4 < Package
   depends_on 'py3_gi_docgen' => :build
   depends_on 'py3_smartypants' => :build
   depends_on 'sqlite' # R
+  depends_on 'unifdef' => :build
   depends_on 'valgrind' => :build
   depends_on 'vulkan_headers' => :build
   depends_on 'vulkan_icd_loader'
   depends_on 'wayland' # R
   depends_on 'woff2' # R
   depends_on 'wpebackend_fdo' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   no_env_options
 
@@ -94,13 +92,13 @@ class Webkit2gtk_4 < Package
       # WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-nonnull)
       # endif ()
 
-      #+    # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
-      #+    # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
-      #+    # https://bugs.webkit.org/show_bug.cgi?id=226557
-      #+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
-      #+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
-      #+    endif ()
-      #+
+      # +    # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
+      # +    # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
+      # +    # https://bugs.webkit.org/show_bug.cgi?id=226557
+      # +    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+      # +        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
+      # +    endif ()
+      # +
       ## -Wexpansion-to-defined produces false positives with GCC but not Clang
       ## https://bugs.webkit.org/show_bug.cgi?id=167643#c13
       # if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
@@ -120,7 +118,7 @@ class Webkit2gtk_4 < Package
       # @arch_flags = '-mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -marm -mlibarch=armv8-a+crc+simd -march=armv8-a+crc+simd'
       @arch_flags = '-mfloat-abi=hard -mtls-dialect=gnu -mthumb -mfpu=vfpv3-d16 -mlibarch=armv7-a+fp -march=armv7-a+fp'
     end
-    @gcc_ver = '-10' if %w[aarch64 armv7l i686].include? ARCH
+    @gcc_ver = '-10'
     @new_gcc = <<~NEW_GCCEOF
       #!/bin/bash
       gcc#{@gcc_ver} #{@arch_flags} $@
@@ -137,38 +135,45 @@ class Webkit2gtk_4 < Package
   end
 
   def self.build
-    # This builds webkit2gtk4 (which uses gtk3)
-    FileUtils.mkdir_p 'builddir'
-    @workdir = `pwd`.chomp
-    Dir.chdir 'builddir' do
-      # Bubblewrap sandbox breaks on epiphany with
-      # bwrap: Can't make symlink at /var/run: File exists
-      # LDFLAGS from debian: -Wl,--no-keep-memory
-      unless File.file?('build.ninja')
-        @arch_linker_flags = ARCH == 'x86_64' ? '' : '-Wl,--no-keep-memory'
-        system "CREW_LINKER_FLAGS='#{@arch_linker_flags}' CC='#{@workdir}/bin/gcc' CXX='#{@workdir}/bin/g++' cmake \
-            -G Ninja \
+    # This builds webkit2gtk4 (which uses gtk3 and libsoup2)
+    @workdir = Dir.pwd
+    # Bubblewrap sandbox breaks on epiphany with
+    # bwrap: Can't make symlink at /var/run: File exists
+    # LDFLAGS from debian: -Wl,--no-keep-memory
+    unless File.file?('build.ninja')
+      @arch_linker_flags = ARCH == 'x86_64' ? '' : '-Wl,--no-keep-memory'
+      system "CREW_LINKER_FLAGS='#{@arch_linker_flags}' CC='#{@workdir}/bin/gcc' CXX='#{@workdir}/bin/g++' \
+            cmake -B builddir -G Ninja \
             #{CREW_CMAKE_FNO_LTO_OPTIONS.gsub('mold', 'gold').sub('-pipe', '-pipe -Wno-error').gsub('-fno-lto', '')} \
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
             -DENABLE_BUBBLEWRAP_SANDBOX=OFF \
             -DENABLE_DOCUMENTATION=OFF \
+            -DENABLE_GLES2=OFF \
             -DENABLE_JOURNALD_LOG=OFF \
             -DENABLE_GAMEPAD=OFF \
             -DENABLE_MINIBROWSER=ON \
             -DUSE_SYSTEM_MALLOC=ON \
             -DPORT=GTK \
+            -DUSE_JPEGXL=ON \
             -DUSE_GTK4=OFF \
             -DUSE_SOUP2=ON \
             -DPYTHON_EXECUTABLE=`which python` \
-            -DUSER_AGENT_BRANDING='Chromebrew' \
-            .."
-      end
-      system "ninja -j #{CREW_NPROC} || ninja -j #{CREW_NPROC.to_f.fdiv(2).ceil} || ninja -j #{CREW_NPROC.to_f.fdiv(2).ceil} || ninja -j #{CREW_NPROC.to_f.fdiv(3).ceil} || ninja -j #{CREW_NPROC.to_f.fdiv(4).ceil}"
+            -DUSER_AGENT_BRANDING='Chromebrew'"
+    end
+    @counter = 1
+    @counter_max = 20
+    loop do
+      break if Kernel.system "#{CREW_NINJA} -C builddir -j #{CREW_NPROC}"
+
+      puts "Make iteration #{@counter} of #{@counter_max}...".orange
+
+      @counter += 1
+      break if @counter > @counter_max
     end
   end
 
   def self.install
-    system 'DESTDIR=/usr/local/tmp/crew/dest ninja -C builddir install'
+    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
     FileUtils.mv "#{CREW_DEST_PREFIX}/bin/WebKitWebDriver", "#{CREW_DEST_PREFIX}/bin/WebKitWebDriver_4.0"
   end
 end

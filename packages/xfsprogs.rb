@@ -3,36 +3,35 @@ require 'package'
 class Xfsprogs < Package
   description 'XFS filesystem utilities'
   homepage 'https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/'
-  @_ver = '5.10.0'
-  version @_ver
+  version "6.12.0-#{CREW_ICU_VER}"
   license 'LGPL-2.1'
-  compatibility 'all'
-  source_url "https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/snapshot/xfsprogs-dev-#{@_ver}.tar.gz"
-  source_sha256 'e807ca9fd8f01e45c9ec8ffb3c123bdb7dfcfd8e05340520d2ff1ddbc3bd7c88'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url 'https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git'
+  git_hashtag "v#{version.split('-').first}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/5.10.0_armv7l/xfsprogs-5.10.0-chromeos-armv7l.tar.xz',
-      armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/5.10.0_armv7l/xfsprogs-5.10.0-chromeos-armv7l.tar.xz',
-        i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/5.10.0_i686/xfsprogs-5.10.0-chromeos-i686.tar.xz',
-      x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/5.10.0_x86_64/xfsprogs-5.10.0-chromeos-x86_64.tar.xz'
-  })
   binary_sha256({
-    aarch64: 'd2034b7ee2c95673d900aed424c04abe6f53cc721261ef3b5822c4d98ca720ef',
-      armv7l: 'd2034b7ee2c95673d900aed424c04abe6f53cc721261ef3b5822c4d98ca720ef',
-        i686: '98a742b31c4082d649150f22a9d58342f41f46d1f97d03e38d835bb1b3517583',
-      x86_64: 'bf575a97e5fbd3cfce4a0f7e547ccb4bcf99b9e05067b112813c8967c904f42e'
+    aarch64: 'cece01bad384d71762c2941bab3ec26eb61dced7f308c578d2669c9dcebbae19',
+     armv7l: 'cece01bad384d71762c2941bab3ec26eb61dced7f308c578d2669c9dcebbae19',
+     x86_64: '1cb8708d6c9bd0664500acc609d3fb5e7315c1b95802e7adb7d5262fe8c972f6'
   })
 
-  depends_on 'libinih'
+  depends_on 'gcc_lib' # R
+  depends_on 'gettext' => :build
+  depends_on 'glibc' # R
+  depends_on 'icu4c' # R
+  depends_on 'libinih' # R
+  depends_on 'liburcu' # R
+  depends_on 'lvm2' # R
+  depends_on 'util_linux' # R
 
   def self.build
     system 'make configure'
-    system "env CFLAGS='-pipe -flto=auto' CXXFLAGS='-pipe -flto=auto' \
-      DEBUG=-DNDEBUG ./configure #{CREW_OPTIONS} --sbindir=#{CREW_PREFIX}/bin"
+    system "DEBUG=-DNDEBUG ./configure #{CREW_CONFIGURE_OPTIONS}"
     system 'make'
   end
 
   def self.install
-    system "make DIST_ROOT=#{CREW_DEST_DIR} PKG_ROOT_SBIN_DIR=#{CREW_PREFIX}/bin install install-dev"
+    system "make DIST_ROOT=#{CREW_DEST_DIR} install install-dev"
   end
 end

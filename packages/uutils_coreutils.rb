@@ -6,29 +6,25 @@ require 'package'
 class Uutils_coreutils < Package
   description 'Cross-platform Rust rewrite of the GNU coreutils'
   homepage 'https://github.com/uutils/coreutils'
-  version '0.0.16'
+  version '0.0.28'
   license 'MIT'
   compatibility 'all'
   source_url 'https://github.com/uutils/coreutils.git'
   git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/uutils_coreutils/0.0.16_armv7l/uutils_coreutils-0.0.16-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/uutils_coreutils/0.0.16_armv7l/uutils_coreutils-0.0.16-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/uutils_coreutils/0.0.16_i686/uutils_coreutils-0.0.16-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/uutils_coreutils/0.0.16_x86_64/uutils_coreutils-0.0.16-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '819bf74dc4d1cdbe7fb45cb711b73f2494c14a7779644905a8b50e8bc8739451',
-     armv7l: '819bf74dc4d1cdbe7fb45cb711b73f2494c14a7779644905a8b50e8bc8739451',
-       i686: '9b6f7f69737350b817fb88ac97f918f8db25ea1418f045446a63783f99c8db7d',
-     x86_64: '082a81168509e3c1a0ff43f8f89e82fb46f4e2c2aa89d3dd5a53a16a7317b8a4'
+    aarch64: 'ea976325a82354c44231285aebb75556c0ab6bcc12b76532187126ce2def7340',
+     armv7l: 'ea976325a82354c44231285aebb75556c0ab6bcc12b76532187126ce2def7340',
+       i686: 'c0b4b8661742f92bc0fabb25530b451888f358d29a862544cad90844889da431',
+     x86_64: '59cb8482bd29a74d8c5f34d3f41096b15cab5f9bd26cd3a0b302f7b3cf48379f'
   })
 
   depends_on 'rust' => :build
   depends_on 'sphinx' => :build
-  depends_on 'gcc' # R
+  depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
+
   conflicts_ok # conflicts with coreutils
 
   def self.preflight

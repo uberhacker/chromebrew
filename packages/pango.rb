@@ -1,62 +1,42 @@
-require 'package'
+require 'buildsystems/meson'
+# build order: harfbuzz => freetype => fontconfig => cairo => pango
 
-class Pango < Package
+class Pango < Meson
   description 'Pango is a library for laying out and rendering of text, with an emphasis on internationalization.'
   homepage 'https://pango.gnome.org/'
-  @_ver = '1.50.10'
-  version @_ver
+  version '1.55.0'
   license 'LGPL-2+ and FTL'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.gnome.org/GNOME/pango.git'
-  git_hashtag @_ver
+  git_hashtag version.split('-').first
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pango/1.50.10_armv7l/pango-1.50.10-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pango/1.50.10_armv7l/pango-1.50.10-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pango/1.50.10_i686/pango-1.50.10-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pango/1.50.10_x86_64/pango-1.50.10-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '53ef271e640894edfe28064d33001b940e2b696519f58b587bf7abe605a8b2f9',
-     armv7l: '53ef271e640894edfe28064d33001b940e2b696519f58b587bf7abe605a8b2f9',
-       i686: 'd84a0a3efe1f1aefb67d8a88f962db89475e3fc581952734920c2f1b3ecb0ed6',
-     x86_64: 'aea1ea8fdc7d53166a36e983bf092e0a41cb8b7a9133548bc88a964d5219f3bf'
+    aarch64: '48b8ec06f019253565677eed265b6aa0222feb26d2f2fd22572fecbb217db1ca',
+     armv7l: '48b8ec06f019253565677eed265b6aa0222feb26d2f2fd22572fecbb217db1ca',
+     x86_64: '673fea915af5662797660cb754a759016e63316338ef70a9731f7178d1e9395a'
   })
 
-  depends_on 'cairo'
-  depends_on 'fontconfig'
-  depends_on 'freetype'
-  depends_on 'fribidi' # Gets built inside install automatically.
-  depends_on 'glib'
-  depends_on 'gobject_introspection' # add this package to build gtk+, avoid compilation error
-  depends_on 'harfbuzz'
-  depends_on 'libx11'
-  depends_on 'libxdmcp'
-  depends_on 'libxft'
-  depends_on 'libxrender'
-  depends_on 'py3_six'
-  depends_on 'xorg_proto' => :build
+  depends_on 'cairo' # R
+  depends_on 'fontconfig' # R
+  depends_on 'freetype' # R
+  depends_on 'fribidi' # R
+  depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
+  depends_on 'glib' # R
+  depends_on 'gobject_introspection' => :build # add this package to build gtk+, avoid compilation error
+  depends_on 'harfbuzz' # R
+  depends_on 'libx11' # R
+  depends_on 'libxdmcp' => :build
+  depends_on 'libxft' # R
+  depends_on 'libxrender' # R
+  depends_on 'xorg_proto' => :build
 
-  def self.build
-    system "meson #{CREW_MESON_OPTIONS} \
-    -Dinstall-tests=false \
-    -Dcairo=enabled \
-    -Dfreetype=enabled \
-    -Dfontconfig=enabled \
-    -Dlibthai=disabled \
-    -Dgtk_doc=false builddir"
-    # gtk-doc is set to false because I (@saltedcofii) am not
-    # convinced anyone is reading them; it's accessable online anyway
-    system 'meson configure builddir'
-    system 'mold -run samu -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} samu -C builddir install"
-  end
-
-  def self.check
-    system 'samu -C builddir test || true'
-  end
+  meson_options '-Dbuild-examples=false \
+      -Dbuild-testsuite=false \
+      -Dcairo=enabled \
+      -Ddocumentation=false \
+      -Dfontconfig=enabled \
+      -Dfreetype=enabled \
+      -Dlibthai=disabled'
 end

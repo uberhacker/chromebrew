@@ -2,39 +2,40 @@ require 'package'
 
 class Devil < Package
   description 'Library for reading several different image formats'
-  homepage 'http://openil.sourceforge.net/'
+  homepage 'https://openil.sourceforge.net/'
   version '1.8.0-6f3d5e9'
   license 'LGPL-2.1'
-  compatibility 'x86_64'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://github.com/DentonW/DevIL.git'
   git_hashtag '6f3d5e9bc5d173f56060fc8e14bed35c8edcfdcc'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/devil/1.8.0-6f3d5e9_x86_64/devil-1.8.0-6f3d5e9-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    x86_64: '494336d49fee91201c74574356a2bf5c1e5bdc6e5d15bcc03decb99210286664'
+    aarch64: 'd14bd70a075ad1602a3850451a91c15f91346f5af5fd99bf4f0054c24595498a',
+     armv7l: 'd14bd70a075ad1602a3850451a91c15f91346f5af5fd99bf4f0054c24595498a',
+     x86_64: '494336d49fee91201c74574356a2bf5c1e5bdc6e5d15bcc03decb99210286664'
   })
 
-  depends_on 'freeglut'
+  depends_on 'freeglut' => :build
   # arm does not build against current release of jasper
-  depends_on 'jasper'
-  depends_on 'lcms'
-  depends_on 'libglu'
-  depends_on 'libjpeg'
-  depends_on 'libpng'
-  depends_on 'libtiff'
-  depends_on 'libxi'
-  depends_on 'libxmu'
-  depends_on 'mesa'
-  depends_on 'gcc' # R
+  depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'jasper' # R
+  depends_on 'lcms' # R
+  depends_on 'libglu' # R
+  depends_on 'libglvnd' # R
+  depends_on 'libjpeg_turbo' # R
+  depends_on 'libpng' # R
+  depends_on 'libtiff' => :build
+  depends_on 'libxi' => :build
+  depends_on 'libxmu' => :build
+  depends_on 'mesa' => :build
+  depends_on 'zlib' # R
 
   def self.patch
     system "find -type f -exec sed -i 's,DESTINATION lib,DESTINATION lib#{CREW_LIB_SUFFIX},g' {} +"
     # As per https://github.com/DentonW/DevIL/pull/102
-    @jasper_patch = <<~'JASPER_PATCH'
+    @jasper_patch = <<~JASPER_PATCH
       diff -NPaur a/DevIL/CMakeLists.txt b/DevIL/CMakeLists.txt
       --- a/DevIL/CMakeLists.txt	2022-10-04 19:42:15.952513098 -0400
       +++ b/DevIL/CMakeLists.txt	2022-10-04 19:51:20.745032984 -0400
@@ -82,7 +83,7 @@ class Devil < Package
        	return iwrite(buf, 1, cnt);
     JASPER_PATCH
     File.write('jasper.patch', @jasper_patch)
-    system 'patch -Np1 -i jasper.patch'
+    system 'patch -Np1 -i jasper.patch' if ARCH == 'x86_64'
   end
 
   def self.build

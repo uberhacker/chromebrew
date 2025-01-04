@@ -3,21 +3,27 @@ require 'package'
 class Gcloud < Package
   description 'Command-line interface for Google Cloud Platform products and services'
   homepage 'https://cloud.google.com/sdk/gcloud/'
-  version '402.0.0'
+  version '504.0.1'
   license 'Apache-2.0'
-  compatibility 'i686,x86_64'
+  compatibility 'all'
   source_url({
-    x86_64: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-#{version}-linux-x86_64.tar.gz",
-      i686: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-#{version}-linux-x86.tar.gz"
+    aarch64: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-#{version}-linux-arm.tar.gz",
+     armv7l: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-#{version}-linux-arm.tar.gz",
+       i686: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-#{version}-linux-x86.tar.gz",
+     x86_64: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-#{version}-linux-x86_64.tar.gz"
   })
   source_sha256({
-    x86_64: 'cc1da7f6774621ffbbe10a0a4fa51e42c4cddef2868d78830fd4f7d43a9d2e7a',
-      i686: '21a7da6cad5885390a1a878451aabba3b1d3a2d72688e9052ecac69020922344'
+    aarch64: '89d148e4dc5837a6ed7292237b49171051ce054886838ada0aca4f4f3f9b7bba',
+     armv7l: '89d148e4dc5837a6ed7292237b49171051ce054886838ada0aca4f4f3f9b7bba',
+       i686: 'e85d4623795ef3bb3d003b457b65f2599176432bacdec92d6010d12922b75df4',
+     x86_64: 'a01ff5312980a18b073c9d2cd6f287ff7d2684f33bd4c927aec20d1d17344874'
   })
 
+  depends_on 'python3'
   depends_on 'xdg_base'
 
   no_shrink
+  no_compile_needed
 
   def self.build
     @gcloudenv = <<~EOF
@@ -54,17 +60,17 @@ class Gcloud < Package
     puts "source ~/.bashrc && gcloud init\n".lightblue
   end
 
-  def self.remove
+  def self.postremove
     print 'Would you like to remove the config directories? [y/N] '
-    response = $stdin.getc
+    response = $stdin.gets.chomp.downcase
     config_dirs = ["#{HOME}/.config/gcloud", "#{CREW_PREFIX}/share/gcloud"]
     config_dirs.each do |config_dir|
       next unless Dir.exist? config_dir
 
       case response
-      when 'y', 'Y'
+      when 'y', 'yes'
         FileUtils.rm_rf config_dir
-        puts "#{config_dir} removed.".lightred
+        puts "#{config_dir} removed.".lightgreen
       else
         puts "#{config_dir} saved.".lightgreen
       end

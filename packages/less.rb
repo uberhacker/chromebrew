@@ -1,37 +1,40 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Less < Package
+class Less < Autotools
   description 'GNU less is a program similar to more, but which allows backward movement in the file as well as forward movement.'
   homepage 'https://www.gnu.org/software/less/'
-  version '608'
+  version '668'
   license 'GPL-3 or BSD-2'
   compatibility 'all'
-  source_url 'https://ftpmirror.gnu.org/gnu/less/less-608.tar.gz'
-  source_sha256 'a69abe2e0a126777e021d3b73aa3222e1b261f10e64624d41ec079685a6ac209'
+  source_url "https://www.greenwoodsoftware.com/less/less-#{version}.tar.gz"
+  source_sha256 '2819f55564d86d542abbecafd82ff61e819a3eec967faa36cd3e68f1596a44b8'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/less/608_armv7l/less-608-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/less/608_armv7l/less-608-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/less/608_i686/less-608-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/less/608_x86_64/less-608-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '5a945772c06719f52ac9d8435a64611d53c29714e7f9c34fc342c38c1912afda',
-     armv7l: '5a945772c06719f52ac9d8435a64611d53c29714e7f9c34fc342c38c1912afda',
-       i686: 'ed9e9b0d5edd476252dc909aa9753e81d0aa4f8167d624ac6d1d6956d18d75ea',
-     x86_64: 'd19353c6ea34e7da8554eab1ec322b655bc581232bc48ecff28fb852420265b1'
+    aarch64: 'b83aeaa88a4efb9f11f8adb5003c2f74ccc1f86a26ec87987106385bf1216b46',
+     armv7l: 'b83aeaa88a4efb9f11f8adb5003c2f74ccc1f86a26ec87987106385bf1216b46',
+       i686: '3a09e33e0e0f02ac98b4eb4e36ebece968f3f9b3f2eda0a0659f018e252cafdc',
+     x86_64: 'a0a9254cb229835653abaaae2b8f14991b97051affb2fa060161eb8b39c9832e'
   })
 
   depends_on 'glibc' # R
   depends_on 'ncurses' # R
-  depends_on 'gcc' # R
+  depends_on 'gcc_lib' # R
+  depends_on 'patch' => :build
 
-  def self.build
-    system "./configure #{CREW_OPTIONS} --with-regex=posix"
-    system 'make'
+  configure_options '--with-regex=posix'
+
+  def self.patch
+    downloader 'https://patch-diff.githubusercontent.com/raw/gwsw/less/pull/412.diff',
+               'feb65b74b27a58e4acdf4efa27d65ab4f79cb5e8a02b9ddffb33b3571828c131'
+    system 'patch -Np1 -i 412.diff'
   end
 
   def self.install
     system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/etc/env.d"
+    File.write "#{CREW_DEST_PREFIX}/etc/env.d/less", <<~LESS_ENV_EOF
+      LESS='--quit-if-one-screen --ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --no-init --window=-4 --use-color'
+    LESS_ENV_EOF
   end
 end

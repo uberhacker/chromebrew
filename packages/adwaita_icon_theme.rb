@@ -1,49 +1,27 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Adwaita_icon_theme < Package
+class Adwaita_icon_theme < Meson
   description 'Theme consisting of a set of icons for GTK+'
   homepage 'https://gitlab.gnome.org/GNOME/adwaita-icon-theme'
-  version '43'
+  version '46.rc'
   license 'LGPL-3 and CC-BY-SA-4.0'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.gnome.org/GNOME/adwaita-icon-theme.git'
   git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/adwaita_icon_theme/43_armv7l/adwaita_icon_theme-43-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/adwaita_icon_theme/43_armv7l/adwaita_icon_theme-43-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/adwaita_icon_theme/43_i686/adwaita_icon_theme-43-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/adwaita_icon_theme/43_x86_64/adwaita_icon_theme-43-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '4173326c11e0dcd6aa69623d5610fe10bb3dcfc40c689c62d0a4d85d7ede1aa7',
-     armv7l: '4173326c11e0dcd6aa69623d5610fe10bb3dcfc40c689c62d0a4d85d7ede1aa7',
-       i686: '25345da36faad61524618f74072558be4c6d136ba79ba18fa53844a50d37323d',
-     x86_64: '31047bf3ad759302707bede40ce53a91ee970be0acbad94e39870fbef2342ab4'
+    aarch64: 'b9758f5261c1e37870387bd852928a74bb57c1d49482405730b3e9ce58c06a50',
+     armv7l: 'b9758f5261c1e37870387bd852928a74bb57c1d49482405730b3e9ce58c06a50',
+     x86_64: '1ab8a6010d91bb3dd6e4a7f844ed505f8b3f4cd3dba5f607818ac486ad65019b'
   })
 
-  depends_on 'cantarell_fonts'
-  depends_on 'gtk3'
-  depends_on 'librsvg'
-  depends_on 'gdk_pixbuf'
+  depends_on 'cantarell_fonts' # L
+  depends_on 'gdk_pixbuf' => :build
+  depends_on 'gtk3' => :build
+  depends_on 'librsvg' => :build
   depends_on 'vala' => :build
   depends_on 'xdg_base'
+
   gnome
-  no_patchelf
-
-  def self.build
-    # Need to make sure svg support is properly loaded otherwise build fails.
-    system "env GDK_PIXBUF_MODULEDIR='#{CREW_LIB_PREFIX}/gdk-pixbuf-2.0/2.10.0/loaders' \
-    GDK_PIXBUF_MODULE_FILE='#{CREW_LIB_PREFIX}/gdk-pixbuf-2.0/2.10.0/loaders.cache' \
-    gdk-pixbuf-query-loaders > #{CREW_LIB_PREFIX}/gdk-pixbuf-2.0/2.10.0/loaders.cache"
-    # Update mime database.
-    system "update-mime-database #{CREW_PREFIX}/share/mime"
-    system '[ -x configure ] || NOCONFIGURE=1 ./autogen.sh'
-    system "./configure #{CREW_OPTIONS}"
-    system 'make'
-  end
-
-  def self.install
-    system "make install DESTDIR=#{CREW_DEST_DIR}"
-  end
 end

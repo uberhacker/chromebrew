@@ -3,32 +3,28 @@ require 'package'
 class Vala < Package
   description 'Vala is a programming language that aims to bring modern programming language features to GNOME developers.'
   homepage 'https://wiki.gnome.org/Projects/Vala'
-  version '0.56.3'
+  version '0.56.16'
   license 'LGPL-2.1+'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.gnome.org/GNOME/vala.git'
   git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vala/0.56.3_armv7l/vala-0.56.3-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vala/0.56.3_armv7l/vala-0.56.3-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vala/0.56.3_i686/vala-0.56.3-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/vala/0.56.3_x86_64/vala-0.56.3-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '80704831036697f5d42a8e2a9127d19ced5c093d63ac22cf491a7f34f6cd6b1c',
-     armv7l: '80704831036697f5d42a8e2a9127d19ced5c093d63ac22cf491a7f34f6cd6b1c',
-       i686: 'e813314e321e7f2b4cfe01aa058e9d9f554581af0c4ace8487a3082127b939da',
-     x86_64: '7aa8e4200d9a8553d0055ecb4bcbc1621bb1d0ae9e16b4cd456233e1360d7058'
+    aarch64: 'b0780c098de6f9a613c2c963e390bcebb5bea73222c345874e62fb4f761bafad',
+     armv7l: 'b0780c098de6f9a613c2c963e390bcebb5bea73222c345874e62fb4f761bafad',
+     x86_64: '58f591a559ad11aa772e3107191136c6c4895ca9372fb917a0f22536acd45401'
   })
 
   depends_on 'autoconf_archive' => :build
   depends_on 'autoconf213' => :build
-  depends_on 'graphviz'
-  depends_on 'libxslt'
-  depends_on 'glib'
-  depends_on 'dbus'
+  depends_on 'graphviz' => :build
+  depends_on 'libxslt' => :build
+  depends_on 'glib' => :build
+  depends_on 'dbus' => :build
   depends_on 'glibc' # R
+  depends_on 'glib' # R
+
   git_fetchtags
   gnome
 
@@ -40,16 +36,16 @@ class Vala < Package
       system 'git checkout b2beeaccdf2307ced172646c2ada9765e1747b28'
       system 'touch */*.stamp'
       system 'autoreconf -fi'
-      system 'VALAC=/no-valac ./configure --prefix=`pwd`/../bootstrap_install'
-      system 'mold -run make'
+      system "VALAC=/no-valac mold -run ./configure --prefix=#{Dir.pwd}/../bootstrap_install"
+      system 'make'
       system 'make install'
     end
 
-    system "#{CREW_ENV_OPTIONS} VALAC=`pwd`/bootstrap_install/bin/valac ./autogen.sh \
-      #{CREW_OPTIONS} \
+    system "VALAC=#{Dir.pwd}/bootstrap_install/bin/valac mold -run ./autogen.sh \
+      #{CREW_CONFIGURE_OPTIONS} \
       --disable-maintainer-mode \
       --disable-valadoc"
-    system 'mold -run make'
+    system 'make'
   end
 
   def self.install

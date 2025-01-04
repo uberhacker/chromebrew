@@ -1,56 +1,26 @@
-require 'package'
+require 'buildsystems/ruby'
 
-class Ruby_debug < Package
-  description 'Debugging functionality for Ruby. This is completely rewritten debug.rb which was contained by the ancient Ruby versions.'
+class Ruby_debug < RUBY
+  description 'The debug library provides debugging functionality to Ruby (MRI) 2.7 and later.'
   homepage 'https://github.com/ruby/debug'
-  version '1.6.2-1'
+  version "1.10.0-#{CREW_RUBY_VER}"
+  license 'MIT'
   compatibility 'all'
   source_url 'SKIP'
+  binary_compression 'gem'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ruby_debug/1.6.2_armv7l/ruby_debug-1.6.2-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ruby_debug/1.6.2_armv7l/ruby_debug-1.6.2-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ruby_debug/1.6.2_i686/ruby_debug-1.6.2-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ruby_debug/1.6.2_x86_64/ruby_debug-1.6.2-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '2bdb5f3152576c078f7375bf83cf87c19a620b91c80e6363d127e5aa68ec790c',
-     armv7l: '2bdb5f3152576c078f7375bf83cf87c19a620b91c80e6363d127e5aa68ec790c',
-       i686: '0046afda40659300d9237be3c45ea444f43c1ccadfbc82e787d4528fb55d98c3',
-     x86_64: '449811904d7d9b2969504f5930d3347a4e1590bda94dea9b43d5856935a7a93e'
+    aarch64: 'a2e20733b547ec3c4213bd402ef4a33eedbfed7da7c0f0e423bb31b76963e8ff',
+     armv7l: 'a2e20733b547ec3c4213bd402ef4a33eedbfed7da7c0f0e423bb31b76963e8ff',
+       i686: 'c8053721a5c8875f4a36ed66f7aa067f175de923e60ad43ed120cee991c74039',
+     x86_64: 'c0a9aa18722f3afd924eb9ddcc6595e2efd22752c76f19a462334b2ee1988057'
   })
 
-  no_fhs
+  depends_on 'ruby_reline' # R
 
-  depends_on 'libyaml'
-  depends_on 'ruby'
-  # depends_on 'xdg_base'
+  depends_on 'ruby_irb' # R
 
-  # @xdg_config_home = ENV.fetch('XDG_CONFIG_HOME', nil)
-  # @xdg_config_home = "#{CREW_PREFIX}/.config" if @xdg_config_home.to_s.empty?
-
-  def self.build; end
-
-  def self.install
-    FileUtils.mkdir_p CREW_DEST_PREFIX
-  end
-
-  def self.postinstall
-    @gem_name = name.sub('ruby_', '')
-    system "gem uninstall -Dx --force --abort-on-dependent #{@gem_name}", exception: false
-    system "gem install -N #{@gem_name}", exception: false
-  end
-
-  def self.remove
-    @gem_name = name.sub('ruby_', '')
-    @gems_deps = `gem dependency ^#{@gem_name}\$ | awk '{print \$1}'`.chomp
-    # Delete the first line and convert to an array.
-    @gems = @gems_deps.split("\n").drop(1).append(@gem_name)
-    # bundler never gets uninstalled, though gem dependency lists it for
-    # every package, so delete it from the list.
-    @gems.delete('bundler')
-    @gems.each do |gem|
-      system "gem uninstall -Dx --force --abort-on-dependent #{gem}", exception: false
-    end
-  end
+  conflicts_ok
+  gem_compile_needed
+  no_source_build
 end

@@ -1,47 +1,45 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Gstreamer < Package
+class Gstreamer < Meson
   description 'GStreamer is a library for constructing graphs of media-handling components.'
   homepage 'https://gstreamer.freedesktop.org/'
-  @_ver = '1.20.3'
-  version @_ver
+  version '1.24.10'
   license 'LGPL-2+'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.freedesktop.org/gstreamer/gstreamer.git'
-  git_hashtag @_ver
+  git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gstreamer/1.20.3-1_armv7l/gstreamer-1.20.3-1-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gstreamer/1.20.3-1_armv7l/gstreamer-1.20.3-1-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gstreamer/1.20.3-1_i686/gstreamer-1.20.3-1-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gstreamer/1.20.3-1_x86_64/gstreamer-1.20.3-1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'e841406957a963846da6a63864001c8165b7afa83abcc73ec1a86b939a3c9462',
-     armv7l: 'e841406957a963846da6a63864001c8165b7afa83abcc73ec1a86b939a3c9462',
-       i686: 'f2ac4f825c4b078617ab15ca590dfe1dbd4fb644c87ad984726cb28f70117a18',
-     x86_64: '23752e3b1a1cb4feb2c3c0a7286833ef2d49598ab615ef93f0874b535e4d1e06'
+    aarch64: 'cad0b84204e08fd78b57b6b6b6b75fc6c3108a9855e8d1246c9bc1ce2e2b3a8b',
+     armv7l: 'cad0b84204e08fd78b57b6b6b6b75fc6c3108a9855e8d1246c9bc1ce2e2b3a8b',
+     x86_64: '46b7222af720aff9d5dce44dce7e7cca4805cb538a4247db98f26fbbda32e90d'
   })
 
   depends_on 'alsa_lib' # R
-  depends_on 'atk' # R
   depends_on 'at_spi2_core' # R
-  depends_on 'bz2' # R
+  depends_on 'bzip2' # R
+  depends_on 'ca_certificates' => :build
   depends_on 'cairo' # R
   depends_on 'chromaprint' # R
-  depends_on 'elfutils'
+  depends_on 'curl' # R
+  depends_on 'elfutils' # R
+  depends_on 'faac' # R
+  depends_on 'faad2' # R
   depends_on 'ffmpeg' # R
   depends_on 'flac' # R
-  depends_on 'gcc' # R
+  depends_on 'gcc_lib' # R
   depends_on 'gdk_pixbuf' # R
-  depends_on 'glib'
+  depends_on 'glibc_lib' # R
   depends_on 'glibc' # R
+  depends_on 'glib' # R
   depends_on 'gmp' # R
   depends_on 'gnutls' # R
+  depends_on 'gobject_introspection' # R
   depends_on 'graphene' # R
-  depends_on 'gsl'
+  depends_on 'gsl' => :build
   depends_on 'gsm' # R
-  depends_on 'gtk3'
+  depends_on 'gtk3' # R
   depends_on 'harfbuzz' # R
   depends_on 'intel_media_sdk' if ARCH.eql?('x86_64') # R
   depends_on 'jack' # R
@@ -51,15 +49,17 @@ class Gstreamer < Package
   depends_on 'libass' # R
   depends_on 'libavc1394' # R
   depends_on 'libcap'
-  depends_on 'libcurl' # R
+  depends_on 'libcap' # R
   depends_on 'libde265' # R
   depends_on 'libdrm' # R
   depends_on 'libdv' # R
   depends_on 'libfdk_aac' # R
+  depends_on 'libffi' # R
   depends_on 'libglvnd' # R
   depends_on 'libgudev' # R
   depends_on 'libiec61883' # R
-  depends_on 'libjpeg'
+  depends_on 'libjpeg_turbo'
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libmodplug' # R
   depends_on 'libmp3lame' # R
   depends_on 'libogg' # R
@@ -70,6 +70,7 @@ class Gstreamer < Package
   depends_on 'libsndfile' # R
   depends_on 'libtheora' # R
   depends_on 'libunwind'
+  depends_on 'libunwind' # R
   depends_on 'libusb' # R
   depends_on 'libva' # R
   depends_on 'libvorbis' # R
@@ -82,18 +83,29 @@ class Gstreamer < Package
   depends_on 'libxdamage' # R
   depends_on 'libxext' # R
   depends_on 'libxfixes' # R
+  depends_on 'libxi' # R
   depends_on 'libxml2' # R
+  depends_on 'libxtst' # R
   depends_on 'libxv' # R
   depends_on 'lilv' # R
   depends_on 'mesa' # R
+  depends_on 'neon' # R
   depends_on 'nettle' # R
   depends_on 'openal' # R
+  depends_on 'openexr' # R
+  depends_on 'openh264' # R
   depends_on 'openjpeg' # R
   depends_on 'openssl' # R
+  depends_on 'opusfile' => :build
   depends_on 'opus' # R
   depends_on 'pango' # R
+  depends_on 'pipewire' # R
   depends_on 'pulseaudio' # R
+  depends_on 'py3_setuptools' => :build
+  depends_on 'py3_pygobject' # R
   depends_on 'python3' # R
+  depends_on 'qt5_base' => :build # otherwise this becomes circular
+  depends_on 'qt5_declarative' => :build # otherwise this becomes circular
   depends_on 'rtmpdump' # R
   depends_on 'sbc' # R
   depends_on 'serd' # R
@@ -101,33 +113,25 @@ class Gstreamer < Package
   depends_on 'speex' # R
   depends_on 'sratom' # R
   depends_on 'srt' # R
+  depends_on 'svt_av1' # R
   depends_on 'v4l_utils' # R
   depends_on 'wavpack' # R
   depends_on 'wayland' # R
   depends_on 'webrtc_audio_processing' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
   depends_on 'zvbi' # R
 
-  conflicts_ok # conflicts with orc, gst_plugins_{base,bad}
-  def self.build
-    @plugins = ''
-    case ARCH
-    when 'i686'
-      @plugins = '-Dgst-plugins-bad:msdk=disabled'
-    end
-    system "meson #{CREW_MESON_OPTIONS} \
+  gnome
+  no_lto
+
+  # conflicts_ok # conflicts with orc, gst_plugins_{base,bad}
+
+  def self.prebuild
+    system "#{CREW_PREFIX}/bin/update-ca-certificates --fresh --certsconf #{CREW_PREFIX}/etc/ca-certificates.conf"
+  end
+
+  meson_options "#{CREW_MESON_OPTIONS.gsub('-mfpu=vfpv3-d16', '-mfpu=neon-fp16')} \
+    -Ddoc=disabled \
     -Dgpl=enabled \
-    -Dtests=disabled #{@plugins}\
-    builddir"
-    system 'meson configure builddir'
-    system 'mold -run samu -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-  end
-
-  def self.check
-    # system 'make', 'check' # The 'gst/gsttracerrecord' test fails.
-  end
+    -Dgtk_doc=disabled"
 end

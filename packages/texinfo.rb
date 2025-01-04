@@ -1,52 +1,33 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Texinfo < Package
+class Texinfo < Autotools
   description 'Texinfo is the official documentation format of the GNU project.'
   homepage 'https://www.gnu.org/software/texinfo/'
-  version '7.0'
+  version "7.1.1-#{CREW_PERL_VER}"
   license 'GPL-3'
   compatibility 'all'
-  source_url 'https://ftpmirror.gnu.org/texinfo/texinfo-7.0.tar.xz'
-  source_sha256 '20744b82531ce7a04d8cee34b07143ad59777612c3695d5855f29fba40fbe3e0'
+  source_url "https://git.savannah.gnu.org/cgit/texinfo.git/snapshot/texinfo-#{version.split('-').first}.tar.gz"
+  source_sha256 'dc6c36214d03cedba0cafe483ade60be2a3d78fc6074125215c805bc5fddf305'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/texinfo/7.0_armv7l/texinfo-7.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/texinfo/7.0_armv7l/texinfo-7.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/texinfo/7.0_i686/texinfo-7.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/texinfo/7.0_x86_64/texinfo-7.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'b2a728d4411d0f6413b4799db055b2a86d34de21b4a3fab0b63816a75e5a1c0f',
-     armv7l: 'b2a728d4411d0f6413b4799db055b2a86d34de21b4a3fab0b63816a75e5a1c0f',
-       i686: '5d2bc0b29e4066dfb002a618089cefe8c438635e45e9cce523fd3da6691c18a8',
-     x86_64: '2c5c0166ad926b0fbafed07ae06b44635bba753fdc569108d6f07dbfb314a7ed'
+    aarch64: '749fd3caf7acfa85c0f567ddb521691e114a3f077848778df14f1e3cc07306a1',
+     armv7l: '749fd3caf7acfa85c0f567ddb521691e114a3f077848778df14f1e3cc07306a1',
+       i686: '62585c50b3dfefe2a1e2d7ef4aa801c2471ad8b119041035e70e40560c25c561',
+     x86_64: 'e1f4f26cc112d9368f3f050a504a073c1f730b123600c3517e162dff1e89f070'
   })
 
+  depends_on 'glibc_lib' # R
   depends_on 'glibc' # R
-  depends_on 'perl'
-  depends_on 'perl_locale_messages'
-  depends_on 'perl_text_unidecode'
-  depends_on 'perl_unicode_eastasianwidth'
+  depends_on 'libunistring' # R
   depends_on 'ncurses' # R
+  depends_on 'perl' # L
+  depends_on 'perl_locale_messages' # L
+  depends_on 'perl_text_unidecode' # L
+  depends_on 'perl_unicode_eastasianwidth' # L
 
-  def self.build
-    # configure and make
-    # LDflags set to workaround i686 build issues.
-    @ldflags = ''
-    @ldflags = 'LDFLAGS=-static' if ARCH == 'i686'
-    system "#{@ldflags} ./configure #{CREW_OPTIONS} \
-      --with-external-Text-Unidecode \
-      --with-external-Unicode-EastAsianWidth"
-    # Fix broken i686 build.
-    system "sed -i 's/-static//' info/Makefile" if ARCH == 'i686'
-    system 'make'
-  end
+  configure_options '--with-external-Text-Unidecode \
+    --with-external-Unicode-EastAsianWidth'
 
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
-
-  def self.check
-    system 'make', 'check'
-  end
+  run_tests
 end

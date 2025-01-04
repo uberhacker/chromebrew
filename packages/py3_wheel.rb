@@ -1,36 +1,23 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_wheel < Package
+class Py3_wheel < Pip
   description 'Wheel is the binary package format for python.'
   homepage 'https://wheel.readthedocs.io/'
-  @_ver = '0.37.1'
-  version "#{@_ver}-1"
+  version "0.45.1-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/pypa/wheel.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_wheel/0.37.1-1_armv7l/py3_wheel-0.37.1-1-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_wheel/0.37.1-1_armv7l/py3_wheel-0.37.1-1-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_wheel/0.37.1-1_i686/py3_wheel-0.37.1-1-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_wheel/0.37.1-1_x86_64/py3_wheel-0.37.1-1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '19030adb5c9a78e4d76b1b6e7fa1b1ead2a15d7b5160e566d81cf3acd3b2375b',
-     armv7l: '19030adb5c9a78e4d76b1b6e7fa1b1ead2a15d7b5160e566d81cf3acd3b2375b',
-       i686: '1b56af7cc567d1001d4a33438bebfd651bce7d02194dd42a1fedd13cf9541ec8',
-     x86_64: 'aa2d8f45650a8afc9be0249124181b669694338264115e84803ba061b60fe155'
+    aarch64: '2a783a6525648463e8b6b1c130b9df517d26ef1b6a0f1b10b10db82bfde33e84',
+     armv7l: '2a783a6525648463e8b6b1c130b9df517d26ef1b6a0f1b10b10db82bfde33e84',
+       i686: '9c27b364a334309868b9996d64118e27d17e2a6c51b555343725f9b1765bd7d1',
+     x86_64: '359bdff17b4c3a73b0c492a73754f0e98d5d5feb775996b78c45151329cd1920'
   })
 
-  depends_on 'py3_setuptools' => :build
+  depends_on 'python3'
   depends_on 'py3_packaging'
 
-  def self.build
-    system "SETUPTOOLS_SCM_PRETEND_VERSION=#{@_ver} python3 -m build #{PY3_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 -m installer #{PY3_INSTALLER_OPTIONS}"
-  end
+  no_source_build
 end
