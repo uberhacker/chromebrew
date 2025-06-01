@@ -10230,6 +10230,11 @@ url: http://www.tortall.net/projects/yasm/releases
 activity: none
 ---
 kind: url
+name: yazi
+url: https://github.com/sxyazi/yazi/releases
+activity: medium
+---
+kind: url
 name: yelp
 url: https://github.com/GNOME/yelp/releases
 activity: medium
