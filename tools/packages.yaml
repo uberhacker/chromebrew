@@ -6465,6 +6465,16 @@ url: https://nim-lang.org/install_unix.html
 activity: medium
 ---
 kind: url
+name: ninexbuddy
+url: https://123sudo.com/desktop/9xbuddy
+activity: low
+---
+kind: url
+name: ninexconvert
+url: https://123sudo.com/desktop/9xconvert
+activity: low
+---
+kind: url
 name: ninja
 url: https://github.com/ninja-build/ninja/releases
 activity: low
