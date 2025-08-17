@@ -7335,6 +7335,11 @@ url: https://gnupg.org/ftp/gcrypt/pinentry
 activity: low
 ---
 kind: url
+name: pinta
+url: https://github.com/PintaProject/Pinta/releases
+activity: medium
+---
+kind: url
 name: pipes_sh
 url: https://github.com/pipeseroni/pipes.sh/releases
 activity: none
