@@ -7740,6 +7740,11 @@ url: https://github.com/RobertCraigie/pyright-python/releases
 activity: high
 ---
 kind: url
+name: py3_radio_active
+url: https://github.com/deep5050/radio-active/releases
+activity: low
+---
+kind: url
 name: py3_ruff
 url: https://docs.astral.sh/ruff
 activity: medium
