@@ -10040,6 +10040,11 @@ url: https://httpredir.debian.org/debian/pool/main/h/hollywood/
 activity: medium
 ---
 kind: url
+name: warp
+url: https://www.warp.dev/download
+activity: high
+---
+kind: url
 name: wavpack
 url: https://github.com/dbry/WavPack/releases
 activity: none
